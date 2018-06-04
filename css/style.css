@@ -1,0 +1,28 @@
+body {
+	background-color: black;
+	font-family: 'Share Tech Mono', monospace;
+}
+
+#gameScreen {
+	background-color: lightblue;
+	margin: auto;
+	width: 70vw;
+	height: 85vh;
+	position: relative;
+}
+
+header {
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	color: white;
+}
+
+#playerChar {
+	background-color: blue;
+    width: 2em;
+    height: 2em;
+    position: absolute;
+    left: 47%;
+    top: 80%;
+}
