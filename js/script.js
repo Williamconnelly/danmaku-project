@@ -101,7 +101,7 @@ $(document).ready(function() {
 				break;
 		}
 	});
-	createEnemy();
+	spawnEnemy();
 	requestAnimationFrame(loopGame);
 });
 
@@ -116,7 +116,7 @@ var allyBullet = function() {
 var bulletMove = function(bulletId, timing) {
 	var bulletLocation = $(bulletId).position().top;
 	var enemyLocation = $(".enemy").position()
-	if (collision($(bulletId), $(".enemy")) === true) {
+	if (numberOfEnemies > 0 && collision($(bulletId), $(".enemy")) === true) {
 		$(".enemy").css("background-color", "gray");
 		$(bulletId).remove();
 	}
@@ -157,9 +157,10 @@ var collision = function ($div1, $div2) {
 };
 
 var createEnemy = function () {
+	numberOfEnemies +=1;
 	$("#gameScreen").append("<div class='enemy' id='enemy" + numberOfEnemies + "'>");
 	var idString = "#enemy" + numberOfEnemies;
-	$(idString).css({left: Math.floor(Math.random() * $("#gameScreen").width()) - 50, top: 10});
+	$(idString).css({left: Math.floor(Math.random() * $("#gameScreen").width()), top: 10});
 	moveEnemy(idString, 17);
 };
 
@@ -170,5 +171,7 @@ var moveEnemy = function(enemyId, timing) {
 	setTimeout(moveEnemy, timing, enemyId);
 };
 
-
+var spawnEnemy = function () {
+	setInterval(createEnemy, 2000);
+};
 
