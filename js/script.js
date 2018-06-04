@@ -2,6 +2,7 @@ var playerPosition;
 var speed = 10;
 var numberOfBullets = 0;
 var bulletSpeed = 4;
+var numberOfEnemies = 0;
 
 var move = {
 	up: false,
@@ -20,7 +21,7 @@ var loopGame = function() {
 		case(move.up && !move.left && !move.right && y > 5.3):
 		y -= speed;
 			break;
-		case(move.down && !move.left && !move.right && y < 584):
+		case(move.down && !move.left && !move.right && y < 640): //584
 		y += speed;
 			break;
 		case(move.left && !move.up && !move.down && x > 5.5):
@@ -37,11 +38,11 @@ var loopGame = function() {
 		y -= speed;
 		x -= speed;
 			break;
-		case(move.down && move.right && y < 584 && x < 965):
+		case(move.down && move.right && y < 640 && x < 965):
 		y += speed;
 		x += speed;
 			break;
-		case(move.down && move.left && y < 584 && x > 5.5):
+		case(move.down && move.left && y < 640 && x > 5.5):
 		y += speed;
 		x -= speed;
 			break;
@@ -100,6 +101,8 @@ $(document).ready(function() {
 				break;
 		}
 	});
+	createEnemy();
+	requestAnimationFrame(moveEnemy);
 	requestAnimationFrame(loopGame);
 });
 
@@ -113,9 +116,9 @@ var allyBullet = function() {
 
 var bulletMove = function(bulletId, timing) {
 	var bulletLocation = $(bulletId).position().top;
-	var enemyLocation = $("#enemy").position()
-	if (collision($(bulletId), $("#enemy")) === true) {
-		$("#enemy").css("background-color", "gray");
+	var enemyLocation = $(".enemy").position()
+	if (collision($(bulletId), $(".enemy")) === true) {
+		$(".enemy").css("background-color", "gray");
 		$(bulletId).remove();
 	}
 	if (bulletLocation > 3) {
@@ -154,11 +157,18 @@ var collision = function ($div1, $div2) {
     return true;
 };
 
+var createEnemy = function () {
+	$("#gameScreen").append("<div class='enemy' id='enemy" + numberOfEnemies + "'>");
+	var idString = "#enemy" + numberOfEnemies;
+	$(idString).css({left: Math.floor(Math.random() * $("#gameScreen").width()) - 50, top: 10});
+};
 
-
-
-
-
+var moveEnemy = function() {
+	let y = $("#playerChar").position();
+	y -= 3;
+	$(".enemy").css({top: y});
+	requestAnimationFrame(moveEnemy);
+};
 
 
 

@@ -48,3 +48,10 @@ header h1 {
     left: 47%;
     top: 20%;
 }
+
+.enemy {
+	background-color: purple;
+    width: 3em;
+    height: 3em;
+    position: absolute;
+}
