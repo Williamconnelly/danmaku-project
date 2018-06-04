@@ -1,5 +1,7 @@
 var playerPosition;
 var speed = 10;
+var numberOfBullets = 0;
+var bulletSpeed = 4;
 
 var move = {
 	up: false,
@@ -65,8 +67,7 @@ $(document).ready(function() {
 			case(e.key === "d"):
 			move.right = true;
 				break;
-			case(e.key === "j" || "j" && "w" || "j" && "s" || "j" && "a" || "j" && "d" ||
-			 "j" && "w" && "a" || "j" && "w" && "d" || "j" && "s" && "a" || "j" && "s" && "d"):
+			case(e.key === "j"):
 			numberOfBullets +=1;
 			allyBullet();
 			default:
@@ -95,3 +96,24 @@ $(document).ready(function() {
 	});
 	requestAnimationFrame(loopGame);
 });
+
+var allyBullet = function() {
+	playerPosition = $("#playerChar").position();
+	$("#gameScreen").append("<div class='allyBullet' id= 'bullet" + numberOfBullets + "'>");
+	var idString = "#bullet" + numberOfBullets;
+	$(idString).css({left: playerPosition.left + 15, top: playerPosition.top - 20});
+	bulletMove(idString, 17);
+};	
+
+var bulletMove = function(bulletId, timing) {
+	var bulletLocation = $(bulletId).position().top;
+	if (bulletLocation > 3) {
+		bulletLocation -= bulletSpeed;
+		$(bulletId).css({top: bulletLocation});
+	} else if (bulletLocation < 10) {
+		$(bulletId).remove();
+	} else {
+		console.log("Something");
+	}
+	setTimeout(bulletMove, timing, bulletId);
+}; 

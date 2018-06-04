@@ -26,3 +26,10 @@ header {
     left: 47%;
     top: 80%;
 }
+
+.allyBullet {
+	background-color: red;
+	height: 10px;
+	width: 5px;
+	position: absolute;
+}
