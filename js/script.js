@@ -102,7 +102,6 @@ $(document).ready(function() {
 		}
 	});
 	createEnemy();
-	requestAnimationFrame(moveEnemy);
 	requestAnimationFrame(loopGame);
 });
 
@@ -161,13 +160,14 @@ var createEnemy = function () {
 	$("#gameScreen").append("<div class='enemy' id='enemy" + numberOfEnemies + "'>");
 	var idString = "#enemy" + numberOfEnemies;
 	$(idString).css({left: Math.floor(Math.random() * $("#gameScreen").width()) - 50, top: 10});
+	moveEnemy(idString, 17);
 };
 
-var moveEnemy = function() {
-	let y = $("#playerChar").position();
-	y -= 3;
-	$(".enemy").css({top: y});
-	requestAnimationFrame(moveEnemy);
+var moveEnemy = function(enemyId, timing) {
+	let y = $(enemyId).position().top;
+	y += 0.5;
+	$(enemyId).css({top: y});
+	setTimeout(moveEnemy, timing, enemyId);
 };
 
 
