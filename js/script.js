@@ -8,6 +8,7 @@ var move = {
 	down: false,
 	left: false,
 	right: false,
+	firing: false
 };
 
 var loopGame = function() {
@@ -68,8 +69,11 @@ $(document).ready(function() {
 			move.right = true;
 				break;
 			case(e.key === "j"):
+			move.firing = true;
 			numberOfBullets +=1;
+			// autoFire();
 			allyBullet();
+				break;
 			default:
 			// console.log("Incorrect Key")
 				break;
@@ -89,7 +93,9 @@ $(document).ready(function() {
 			case(e.key === "d"):
 			move.right = false;
 				break;
-			default:
+			case(e.key === "j"): 
+			move.firing = false;
+				default:
 			// console.log("Incorrect Key")
 				break;
 		}
@@ -99,7 +105,7 @@ $(document).ready(function() {
 
 var allyBullet = function() {
 	playerPosition = $("#playerChar").position();
-	$("#gameScreen").append("<div class='allyBullet' id= 'bullet" + numberOfBullets + "'>");
+	$("#gameScreen").append("<div class='allyBullet' id='bullet" + numberOfBullets + "'>");
 	var idString = "#bullet" + numberOfBullets;
 	$(idString).css({left: playerPosition.left + 15, top: playerPosition.top - 20});
 	bulletMove(idString, 17);
@@ -107,13 +113,52 @@ var allyBullet = function() {
 
 var bulletMove = function(bulletId, timing) {
 	var bulletLocation = $(bulletId).position().top;
+	var enemyLocation = $("#enemy").position()
+	if (collision($(bulletId), $("#enemy")) === true) {
+		$("#enemy").css("background-color", "gray");
+		$(bulletId).remove();
+	}
 	if (bulletLocation > 3) {
 		bulletLocation -= bulletSpeed;
 		$(bulletId).css({top: bulletLocation});
-	} else if (bulletLocation < 10) {
+	} else if (bulletLocation < 3) {
 		$(bulletId).remove();
-	} else {
-		console.log("Something");
 	}
 	setTimeout(bulletMove, timing, bulletId);
 }; 
+
+var autoFire = function () {
+	if (move.firing === true) {
+		allyBullet();
+		var shoot = setTimeout(autoFire);
+	} else {
+		clearTimeout(shoot);
+	}
+};
+
+var collision = function ($div1, $div2) {
+    let xcoord1 = $div1.offset().left;
+    let ycoord1 = $div1.offset().top;
+    let height1 = $div1.outerHeight(true);
+    let width1 = $div1.outerWidth(true);
+    let side1 = ycoord1 + height1;
+    let base1 = xcoord1 + width1;
+    let xcoord2 = $div2.offset().left;
+    let ycoord2 = $div2.offset().top;
+    let height2 = $div2.outerHeight(true);
+    let width2 = $div2.outerWidth(true);
+    let side2 = ycoord2 + height2;
+    let base2 = xcoord2 + width2;
+
+    if (side1 < ycoord2 || ycoord1 > side2 || base1 < xcoord2 || xcoord1 > base2) return false;
+    return true;
+};
+
+
+
+
+
+
+
+
+
