@@ -8,6 +8,11 @@ var Ship = function(x, y, height, width, color, speed, element) {
 	this.element = element;
 };
 
+var gameHeight = $("#gameScreen").innerHeight();
+var gameWidth = $("#gameScreen").innerWidth();
+console.log(gameHeight);
+console.log(gameWidth);
+
 var move = {
 	up: false,
 	down: false,
@@ -63,32 +68,33 @@ $(document).keyup(function(e) {
 
 var loopGame = function() {
 	//Player Input
+	// console.log(player.x, player.y);
 	switch(true) {
-		case(move.up && !move.left && !move.right && player.y > 5.3):
+		case(move.up && !move.left && !move.right && player.y > 0):
 		player.y -= player.speed;
 			break;
-		case(move.down && !move.left && !move.right && player.y < 584): 
+		case(move.down && !move.left && !move.right && player.y + player.height < gameHeight): 
 		player.y += player.speed;
 			break;
-		case(move.left && !move.up && !move.down && player.x > 5.5):
+		case(move.left && !move.up && !move.down && player.x > 0):
 		player.x -= player.speed;
 			break;
-		case(move.right && !move.up && !move.down && player.x < 965):
+		case(move.right && !move.up && !move.down && player.x + player.width < gameWidth):
 		player.x += player.speed;
 			break;
-		case(move.up && move.right && player.y > 5.3 && player.x < 965):
+		case(move.up && move.right && player.y > 0 && player.x + player.width < gameWidth):
 		player.y -= player.speed;
 		player.x += player.speed;
 			break;
-		case(move.up && move.left && player.y > 5.3 && player.x > 5.5):
+		case(move.up && move.left && player.y > 0 && player.x > 0):
 		player.y -= player.speed;
 		player.x -= player.speed;
 			break;
-		case(move.down && move.right && player.y < 584 && player.x < 965):
+		case(move.down && move.right && player.y + player.height < gameHeight && player.x + player.width < gameWidth):
 		player.y += player.speed;
 		player.x += player.speed;
 			break;
-		case(move.down && move.left && player.y < 584 && player.x > 5.5):
+		case(move.down && move.left && player.y + player.height < gameHeight && player.x > 0):
 		player.y += player.speed;
 		player.x -= player.speed;
 			break;
@@ -113,7 +119,7 @@ var createPlayer = function() {
 	playerDiv.attr("id", "playerShip");
 	// Instantiates a new Ship object and stores in "player"
 	player = new Ship(100, 100, 50, 50, "blue", 10, playerDiv);
-	// Appends the new element to the gamescreen
+	// Appends the new element to the gameScreen
 	$("#gameScreen").append(player.element);
 	// Alters the associated element's css properties with the values in the object
 	$(player.element).css({"background-color": player.color, "position": "absolute", "left": player.x,
