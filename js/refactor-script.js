@@ -16,24 +16,6 @@ var move = {
 	firing: false
 };
 
-// Makes a new div and stores in playerDiv
-var playerDiv = $('<div>');
-
-// Sets the playerDiv's ID
-playerDiv.attr("id", "playerShip");
-
-// Instantiates a new Ship object and stores in "player"
-player = new Ship(100, 100, 50, 50, "blue", 10, playerDiv);
-
-// Appends the new element to the gamescreen
-$("#gameScreen").append(player.element);
-
-// Alters the associated element's css properties with the values in the object
-$(player.element).css("left", player.x + "px");
-
-$("#playerShip").css({"background-color": player.color, "position": "absolute", "left": player.x,
- "top": player.y, "width": player.width, "height": player.height});
-
 $(document).keydown(function(e) {
 	switch(true) {
 		case(e.key === "w"):
@@ -124,6 +106,21 @@ var loopGame = function() {
 	requestAnimationFrame(loopGame);
 };
 
+var createPlayer = function() {
+	// Makes a new div and stores in playerDiv
+	var playerDiv = $('<div>');
+	// Sets the playerDiv's ID
+	playerDiv.attr("id", "playerShip");
+	// Instantiates a new Ship object and stores in "player"
+	player = new Ship(100, 100, 50, 50, "blue", 10, playerDiv);
+	// Appends the new element to the gamescreen
+	$("#gameScreen").append(player.element);
+	// Alters the associated element's css properties with the values in the object
+	$(player.element).css({"background-color": player.color, "position": "absolute", "left": player.x,
+	 "top": player.y, "width": player.width, "height": player.height});
+}
+
 $(document).ready(function(){
+	createPlayer();
 	requestAnimationFrame(loopGame);
 });
