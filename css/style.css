@@ -18,35 +18,11 @@ header {
 	color: white;
 }
 
-header h1 {
-/*	background-color: red;
-	display: inline-block;
-	margin: 10px;*/
-}
-
-#playerChar {
-	background-color: blue;
-    width: 2em;
-    height: 2em;
-    position: absolute;
-    left: 47%;
-    top: 80%;
-}
-
 .allyBullet {
 	background-color: red;
 	height: 10px;
 	width: 5px;
 	position: absolute;
-}
-
-#enemy {
-	background-color: purple;
-    width: 3em;
-    height: 3em;
-    position: absolute;
-    left: 47%;
-    top: 20%;
 }
 
 .enemy {

@@ -21,7 +21,7 @@ var loopGame = function() {
 		case(move.up && !move.left && !move.right && y > 5.3):
 		y -= speed;
 			break;
-		case(move.down && !move.left && !move.right && y < 640): //584
+		case(move.down && !move.left && !move.right && y < 584): 
 		y += speed;
 			break;
 		case(move.left && !move.up && !move.down && x > 5.5):
@@ -38,11 +38,11 @@ var loopGame = function() {
 		y -= speed;
 		x -= speed;
 			break;
-		case(move.down && move.right && y < 640 && x < 965):
+		case(move.down && move.right && y < 584 && x < 965):
 		y += speed;
 		x += speed;
 			break;
-		case(move.down && move.left && y < 640 && x > 5.5):
+		case(move.down && move.left && y < 584 && x > 5.5):
 		y += speed;
 		x -= speed;
 			break;
@@ -107,7 +107,7 @@ $(document).ready(function() {
 
 var allyBullet = function() {
 	playerPosition = $("#playerChar").position();
-	$("#gameScreen").append("<div class='allyBullet' id='bullet" + numberOfBullets + "'>");
+	$("#gameScreen").append("<div class='allyBullet' id='bullet" + numberOfBullets + "'></div>");
 	var idString = "#bullet" + numberOfBullets;
 	$(idString).css({left: playerPosition.left + 15, top: playerPosition.top - 20});
 	bulletMove(idString, 17);
@@ -115,7 +115,7 @@ var allyBullet = function() {
 
 var bulletMove = function(bulletId, timing) {
 	var bulletLocation = $(bulletId).position().top;
-	var enemyLocation = $(".enemy").position()
+	var enemyLocation = $(".enemy").position();
 	if (numberOfEnemies > 0 && collision($(bulletId), $(".enemy")) === true) {
 		$(".enemy").css("background-color", "gray");
 		$(bulletId).remove();
@@ -129,6 +129,7 @@ var bulletMove = function(bulletId, timing) {
 	setTimeout(bulletMove, timing, bulletId);
 }; 
 
+// Not functional
 var autoFire = function () {
 	if (move.firing === true) {
 		allyBullet();
@@ -141,6 +142,9 @@ var autoFire = function () {
 var collision = function ($div1, $div2) {
     let xcoord1 = $div1.offset().left;
     let ycoord1 = $div1.offset().top;
+
+    let coord1 = $div1.offset();
+
     let height1 = $div1.outerHeight(true);
     let width1 = $div1.outerWidth(true);
     let side1 = ycoord1 + height1;
@@ -160,13 +164,17 @@ var createEnemy = function () {
 	numberOfEnemies +=1;
 	$("#gameScreen").append("<div class='enemy' id='enemy" + numberOfEnemies + "'>");
 	var idString = "#enemy" + numberOfEnemies;
-	$(idString).css({left: Math.floor(Math.random() * $("#gameScreen").width()), top: 10});
+	$(idString).css({left: Math.floor(Math.random() * $("#gameScreen").width()), top: -60});
 	moveEnemy(idString, 17);
 };
 
 var moveEnemy = function(enemyId, timing) {
 	let y = $(enemyId).position().top;
-	y += 0.5;
+	if (y < 620) {
+		y += 0.3;
+	} else {
+		$(enemyId).remove();
+	}
 	$(enemyId).css({top: y});
 	setTimeout(moveEnemy, timing, enemyId);
 };
@@ -174,4 +182,5 @@ var moveEnemy = function(enemyId, timing) {
 var spawnEnemy = function () {
 	setInterval(createEnemy, 2000);
 };
+
 
