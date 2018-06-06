@@ -73,6 +73,7 @@ $(document).keyup(function(e) {
 
 var loopGame = function() {
 	//Player Input
+	// console.log(player.x, player.y);
 	switch(true) {
 		case(move.up && !move.left && !move.right && player.y > 0):
 		player.y -= player.speed;
@@ -111,8 +112,12 @@ var loopGame = function() {
 
 	if (activeBullets.length > 0) {
 		$.each($('.allyBullet'), function(i, item){
-			activeBullets[i].y -= activeBullets[i].speed;	
-			$(item).css({'top': activeBullets[i].y})
+			if (activeBullets[i].y < -20) {
+				$(item).hide();
+			} else if (activeBullets[i].y < gameHeight) {
+				activeBullets[i].y -= activeBullets[i].speed;	
+				$(item).css({'top': activeBullets[i].y})
+			}
 		})
 	}
 	//Check for collisions
@@ -129,7 +134,7 @@ var createPlayer = function() {
 	// Sets the playerDiv's ID
 	playerDiv.attr("id", "playerShip");
 	// Instantiates a new Ship object and stores in "player"
-	player = new GameObject(100, 100, 50, 50, "blue", 10, playerDiv);
+	player = new GameObject(gameWidth / 2 - 25, 500, 50, 50, "blue", 10, playerDiv);
 	// Appends the new element to the gameScreen
 	$("#gameScreen").append(player.element);
 	// Alters the associated element's css properties with the values in the object
@@ -140,7 +145,7 @@ var createPlayer = function() {
 var fireBullet = function() {
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "allyBullet");
-	var bullet = new GameObject(player.x + 23, player.y - 16, 10, 5, "red", 4, bulletDiv)
+	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 4, bulletDiv)
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width":bullet.width, "height": bullet.height});

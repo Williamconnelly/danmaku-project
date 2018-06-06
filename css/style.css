@@ -18,13 +18,6 @@ header {
 	color: white;
 }
 
-/*.allyBullet {
-	background-color: red;
-	height: 10px;
-	width: 5px;
-	position: absolute;
-}*/
-
 .enemy {
 	background-color: purple;
     width: 3em;
