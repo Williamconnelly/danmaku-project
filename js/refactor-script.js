@@ -1,7 +1,7 @@
 var numberOfBullets = 0;
 var activeBullets = [];
 var numberOfEnemies = 0;
-var activeEnemies 
+var activeEnemies = []
 var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 
@@ -126,7 +126,19 @@ var loopGame = function() {
 				$(item).css({'top': activeBullets[i].y})
 			}
 		})
-	}
+	};
+	if (activeEnemies.length > 0) {
+		$.each($(".enemy"), function(i, item){
+			if (activeEnemies[i].y > gameHeight) {
+				$(item).hide();
+			} else if (activeEnemies[i].y < gameHeight) {
+				console.log(activeEnemies[i].y)
+				console.log(gameHeight);
+				activeEnemies[i].y += activeEnemies[i].speed;
+				$(item).css({"top": activeEnemies[i].y})
+			}
+		})
+	};
 	//Check for collisions
 
 	//Update Game State
@@ -155,7 +167,7 @@ var createPlayer = function() {
 var fireBullet = function() {
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "allyBullet");
-	var bullet = new GameObject(player.x + 23, player.y - 16, 20, 5, "red", 10, bulletDiv)
+	var bullet = new GameObject(player.x + 23, player.y - 16, 20, 5, "red", 10, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width":bullet.width, "height": bullet.height});
@@ -165,13 +177,12 @@ var fireBullet = function() {
 var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
-	// let randomX = Math.floor(Math.random() * gameWidth);
-	// console.log(randomX);
-	var enemy = new GameObject(Math.floor(Math.random() * gameWidth), 0, 50, 80, "purple", 0.5, enemyDiv)
+	var enemy = new GameObject(Math.floor(Math.random() * gameWidth), 0, 50, 80, "purple", 0.5, enemyDiv);
 	$("#gameScreen").append(enemy.element);
 	$(enemy.element).css({"background-color": enemy.color, "position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
 	setTimeout(createEnemy, 3000);
+	activeEnemies.push(enemy);
 };
 
 $(document).ready(function(){
