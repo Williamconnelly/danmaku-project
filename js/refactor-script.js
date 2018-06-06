@@ -1,4 +1,10 @@
-var Ship = function(x, y, height, width, color, speed, element) {
+var numberOfBullets = 0;
+var activeBullets = [];
+var numberOfEnemies = 0;
+var gameHeight = $("#gameScreen").innerHeight();
+var gameWidth = $("#gameScreen").innerWidth();
+
+var GameObject = function(x, y, height, width, color, speed, element) {
 	this.x = x;
 	this.y = y;
 	this.height = height;
@@ -8,11 +14,7 @@ var Ship = function(x, y, height, width, color, speed, element) {
 	this.element = element;
 };
 
-var gameHeight = $("#gameScreen").innerHeight();
-var gameWidth = $("#gameScreen").innerWidth();
-console.log(gameHeight);
-console.log(gameWidth);
-
+// Array of pressed or not-pressed key states
 var move = {
 	up: false,
 	down: false,
@@ -21,6 +23,7 @@ var move = {
 	firing: false
 };
 
+// Activates Relevant Keys When Pressed
 $(document).keydown(function(e) {
 	switch(true) {
 		case(e.key === "w"):
@@ -37,6 +40,7 @@ $(document).keydown(function(e) {
 			break;
 		case(e.key === "j"):
 		move.firing = true;
+		fireBullet();
 			break;
 		default:
 		// console.log("Incorrect Key")
@@ -44,6 +48,7 @@ $(document).keydown(function(e) {
 	}
 });
 
+// Deactivates Activated Keys When Released
 $(document).keyup(function(e) {
 	switch(true) {
 		case(e.key === "w"):
@@ -68,7 +73,6 @@ $(document).keyup(function(e) {
 
 var loopGame = function() {
 	//Player Input
-	// console.log(player.x, player.y);
 	switch(true) {
 		case(move.up && !move.left && !move.right && player.y > 0):
 		player.y -= player.speed;
@@ -104,6 +108,13 @@ var loopGame = function() {
 	}
 	//Update All Positions
 	$(player.element).css({"left": player.x, "top": player.y});
+
+	if (activeBullets.length > 0) {
+		$.each($('.allyBullet'), function(i, item){
+			activeBullets[i].y -= activeBullets[i].speed;	
+			$(item).css({'top': activeBullets[i].y})
+		})
+	}
 	//Check for collisions
 
 	//Update Game State
@@ -118,13 +129,23 @@ var createPlayer = function() {
 	// Sets the playerDiv's ID
 	playerDiv.attr("id", "playerShip");
 	// Instantiates a new Ship object and stores in "player"
-	player = new Ship(100, 100, 50, 50, "blue", 10, playerDiv);
+	player = new GameObject(100, 100, 50, 50, "blue", 10, playerDiv);
 	// Appends the new element to the gameScreen
 	$("#gameScreen").append(player.element);
 	// Alters the associated element's css properties with the values in the object
 	$(player.element).css({"background-color": player.color, "position": "absolute", "left": player.x,
 	 "top": player.y, "width": player.width, "height": player.height});
 }
+
+var fireBullet = function() {
+	var bulletDiv = $('<div>');
+	bulletDiv.attr("class", "allyBullet");
+	var bullet = new GameObject(player.x + 23, player.y - 16, 10, 5, "red", 4, bulletDiv)
+	$("#gameScreen").append(bullet.element);
+	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
+	 "top": bullet.y, "width":bullet.width, "height": bullet.height});
+	activeBullets.push(bullet);
+};
 
 $(document).ready(function(){
 	createPlayer();
