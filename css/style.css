@@ -1,11 +1,11 @@
 body {
-	background-color: black;
+	background-color: darkgray;
 	font-family: 'Share Tech Mono', monospace;
 	position: relative;
 }
 
 #gameScreen {
-	background-color: lightblue;
+	background-image: url(../img/spacebg.png);
 	margin: auto;
 	width: 70vw;
 	height: 85vh;
@@ -21,4 +21,16 @@ header {
 
 .hide {
 	visibility: hidden;
+}
+
+#playerShip {
+	background-image: url(../img/player-ship.png);
+	background-position: center;
+	background-size: 50px;
+}
+
+.enemy {
+	background-image: url(../img/enemy-ship.png);
+	background-position: center;
+	background-size: 50px;
 }

@@ -83,11 +83,11 @@ var createPlayer = function() {
 	// Sets the playerDiv's ID
 	playerDiv.attr("id", "playerShip");
 	// Instantiates a new Game object and stores in "player"
-	player = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "blue", 10, playerDiv);
+	player = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "transparent", 10, playerDiv);
 	// Appends the new element to the gameScreen
 	$("#gameScreen").append(player.element);
 	// Alters the associated element's css properties with the values in the object
-	$(player.element).css({"background-color": player.color, "position": "absolute", "left": player.x,
+	$(player.element).css({"position": "absolute", "left": player.x,
 	 "top": player.y, "width": player.width, "height": player.height});
 }
 
@@ -117,24 +117,24 @@ var createEnemy = function() {
 	enemyDiv.attr("class", "enemy");
 	enemy = new GameObject(Math.floor(Math.random() * gameWidth), 0, 50, 80, "purple", 0.5, enemyDiv);
 	$("#gameScreen").append(enemy.element);
-	$(enemy.element).css({"background-color": enemy.color, "position": "absolute", "left": enemy.x,
+	$(enemy.element).css({"position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
 	activeEnemies.push(enemy);
-	addFireRate()
+	addFireRate();
 	setTimeout(createEnemy, 3000);
 };
 
 var enemyShoot = function(id) {
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "eBullet");
-		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "green", 10, bulletDiv);
+		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "#71f442", 10, bulletDiv);
 		$("#gameScreen").append(eBullet.element);
 		$(eBullet.element).css({"background-color": eBullet.color, "position": "absolute", "left": eBullet.x,
 	 "top": eBullet.y, "width": eBullet.width, "height": eBullet.height});
 	activeEBullets.push(eBullet);
 };
 
-var checkCollision = function() {
+var checkGoodCollision = function() {
 	if (activeBullets.length > 0 && activeEnemies.length > 0) {
 		for (var i=0; i < activeBullets.length; i++) {
 			for (var o=0; o < activeEnemies.length; o++) {
@@ -147,10 +147,6 @@ var checkCollision = function() {
 					// activeEnemies[o].element.attr("class", "hide");
 					// activeEnemies[o].element.attr("class", "hide");
 					activeEnemies[o].element.remove();
-					// for (let x=0; x < activeEnemies.length; x++) {
-					// 	activeEnemies[x].y -= 50 ;
-					// 	console.log(activeEnemies[x].y);
-					// }
 				}
 			}
 		}
@@ -227,7 +223,7 @@ var loopGame = function() {
 		})
 	};
 	//Check for collisions
-	checkCollision();
+	checkGoodCollision();
 	//Update Game State
 	if (move.firing) {
 		fireBullet();
