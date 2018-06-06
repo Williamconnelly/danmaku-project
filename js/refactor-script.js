@@ -1,7 +1,10 @@
+var player;
+var enemy;
 var numberOfBullets = 0;
 var activeBullets = [];
 var numberOfEnemies = 0;
-var activeEnemies = []
+var activeEnemies = [];
+var activeEBullets = [];
 var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 
@@ -13,6 +16,9 @@ var GameObject = function(x, y, height, width, color, speed, element) {
 	this.color = color;
 	this.speed = speed;
 	this.element = element;
+	this.fire = function() {
+		enemyShoot(this);
+	}
 };
 
 // Array of pressed or not-pressed key states
@@ -71,76 +77,6 @@ $(document).keyup(function(e) {
 	}
 });
 
-var loopGame = function() {
-	//Player Input
-	// console.log(player.x, player.y);
-	switch(true) {
-		case(move.up && !move.left && !move.right && player.y > 0):
-		player.y -= player.speed;
-			break;
-		case(move.down && !move.left && !move.right && player.y + player.height < gameHeight): 
-		player.y += player.speed;
-			break;
-		case(move.left && !move.up && !move.down && player.x > 0):
-		player.x -= player.speed;
-			break;
-		case(move.right && !move.up && !move.down && player.x + player.width < gameWidth):
-		player.x += player.speed;
-			break;
-		case(move.up && move.right && player.y > 0 && player.x + player.width < gameWidth):
-		player.y -= player.speed;
-		player.x += player.speed;
-			break;
-		case(move.up && move.left && player.y > 0 && player.x > 0):
-		player.y -= player.speed;
-		player.x -= player.speed;
-			break;
-		case(move.down && move.right && player.y + player.height < gameHeight && player.x + player.width < gameWidth):
-		player.y += player.speed;
-		player.x += player.speed;
-			break;
-		case(move.down && move.left && player.y + player.height < gameHeight && player.x > 0):
-		player.y += player.speed;
-		player.x -= player.speed;
-			break;
-		default:
-		// console.log("Something is wrong");
-			break;
-	}
-	//Update All Positions
-	$(player.element).css({"left": player.x, "top": player.y});
-
-	if (activeBullets.length > 0) {
-		$.each($('.allyBullet'), function(i, item){
-			if (activeBullets[i].y < -20) {
-				$(item).hide();
-			} else if (activeBullets[i].y < gameHeight) {
-				activeBullets[i].y -= activeBullets[i].speed;	
-				$(item).css({'top': activeBullets[i].y})
-			}
-		})
-	};
-	if (activeEnemies.length > 0) {
-		$.each($(".enemy"), function(i, item){
-			if (activeEnemies[i].y > gameHeight) {
-				$(item).hide();
-			} else if (activeEnemies[i].y < gameHeight) {
-				activeEnemies[i].y += activeEnemies[i].speed;
-				$(item).css({"top": activeEnemies[i].y})
-			}
-		})
-	};
-	//Check for collisions
-	checkCollision();
-	//Update Game State
-	if (move.firing) {
-		fireBullet();
-	};
-
-	//Loop 
-	requestAnimationFrame(loopGame);
-};
-
 var createPlayer = function() {
 	// Makes a new div and stores in playerDiv
 	var playerDiv = $('<div>');
@@ -161,19 +97,41 @@ var fireBullet = function() {
 	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
-	 "top": bullet.y, "width":bullet.width, "height": bullet.height});
+	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
 	activeBullets.push(bullet);
+};
+
+var getRandomNumber = function(min, max) {
+	return Math.floor(Math.random() * max) + min;
+};
+
+var addFireRate = function () {
+	var index = activeEnemies.length -1;
+	setInterval(function() {
+		activeEnemies[index].fire();
+	}, getRandomNumber(1000, 4000));
 };
 
 var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
-	var enemy = new GameObject(Math.floor(Math.random() * gameWidth), 0, 50, 80, "purple", 0.5, enemyDiv);
+	enemy = new GameObject(Math.floor(Math.random() * gameWidth), 0, 50, 80, "purple", 0.5, enemyDiv);
 	$("#gameScreen").append(enemy.element);
 	$(enemy.element).css({"background-color": enemy.color, "position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
-	setTimeout(createEnemy, 3000);
 	activeEnemies.push(enemy);
+	addFireRate()
+	setTimeout(createEnemy, 3000);
+};
+
+var enemyShoot = function(id) {
+	var bulletDiv = $('<div>');
+	bulletDiv.attr("class", "eBullet");
+		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "green", 10, bulletDiv);
+		$("#gameScreen").append(eBullet.element);
+		$(eBullet.element).css({"background-color": eBullet.color, "position": "absolute", "left": eBullet.x,
+	 "top": eBullet.y, "width": eBullet.width, "height": eBullet.height});
+	activeEBullets.push(eBullet);
 };
 
 var checkCollision = function() {
@@ -186,14 +144,97 @@ var checkCollision = function() {
 					activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
 					// do nothing
 				} else {
+					// activeEnemies[o].element.attr("class", "hide");
+					// activeEnemies[o].element.attr("class", "hide");
 					activeEnemies[o].element.remove();
 					// for (let x=0; x < activeEnemies.length; x++) {
-					// 	activeEnemies[x].y = 40;
+					// 	activeEnemies[x].y -= 50 ;
+					// 	console.log(activeEnemies[x].y);
 					// }
 				}
 			}
 		}
 	}
+};
+
+var loopGame = function() {
+	//Player Input
+	// console.log(player.x, player.y);
+	switch(true) {
+		case(move.up && !move.left && !move.right && player.y > 0):
+		player.y -= player.speed;
+			break;
+		case(move.down && !move.left && !move.right && player.y + player.height < gameHeight - 3): 
+		player.y += player.speed;
+			break;
+		case(move.left && !move.up && !move.down && player.x > 0):
+		player.x -= player.speed;
+			break;
+		case(move.right && !move.up && !move.down && player.x + player.width < gameWidth):
+		player.x += player.speed;
+			break;
+		case(move.up && move.right && player.y > 0 && player.x + player.width < gameWidth):
+		player.y -= player.speed;
+		player.x += player.speed;
+			break;
+		case(move.up && move.left && player.y > 0 && player.x > 0):
+		player.y -= player.speed;
+		player.x -= player.speed;
+			break;
+		case(move.down && move.right && player.y + player.height < gameHeight - 3 && player.x + player.width < gameWidth):
+		player.y += player.speed;
+		player.x += player.speed;
+			break;
+		case(move.down && move.left && player.y + player.height < gameHeight - 3 && player.x > 0):
+		player.y += player.speed;
+		player.x -= player.speed;
+			break;
+		default:
+		// console.log("Something is wrong");
+			break;
+	}
+	//Update All Positions
+	$(player.element).css({"left": player.x, "top": player.y});
+
+	if (activeBullets.length > 0) {
+		$.each($('.allyBullet'), function(i, item){
+			if (activeBullets[i].y < 5) {
+				$(item).hide();
+			} else if (activeBullets[i].y < gameHeight) {
+				activeBullets[i].y -= activeBullets[i].speed;	
+				$(item).css({'top': activeBullets[i].y})
+			}
+		})
+	};
+	if (activeEnemies.length > 0) {
+		$.each($(".enemy"), function(i, item){
+			if (activeEnemies[i].y > gameHeight) {
+				$(item).hide();
+			} else if (activeEnemies[i].y < gameHeight) {
+				activeEnemies[i].y += activeEnemies[i].speed;
+				$(item).css({"top": activeEnemies[i].y})
+			}
+		})
+	};
+	if (activeEBullets.length > 0) {
+		$.each($('.eBullet'), function(i, item){
+			if (activeEBullets[i].y > gameHeight) {
+				$(item).hide();
+			} else if (activeEBullets[i].y < gameHeight) {
+				activeEBullets[i].y += activeEBullets[i].speed;	
+				$(item).css({'top': activeEBullets[i].y})
+			}
+		})
+	};
+	//Check for collisions
+	checkCollision();
+	//Update Game State
+	if (move.firing) {
+		fireBullet();
+	};
+
+	//Loop 
+	requestAnimationFrame(loopGame);
 };
 
 $(document).ready(function(){

@@ -2,7 +2,6 @@ body {
 	background-color: black;
 	font-family: 'Share Tech Mono', monospace;
 	position: relative;
-	z-index: 400;
 }
 
 #gameScreen {
@@ -11,7 +10,6 @@ body {
 	width: 70vw;
 	height: 85vh;
 	position: relative;
-	z-index: 1000;
 }
 
 header {
@@ -19,17 +17,6 @@ header {
 	margin: 0;
 	padding: 0;
 	color: white;
-}
-
-.enemy {
-	background-color: purple;
-    width: 3em;
-    height: 3em;
-    position: absolute;
-}
-
-.allyBullet {
-	z-index: -2000	
 }
 
 .hide {
