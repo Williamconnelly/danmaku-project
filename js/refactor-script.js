@@ -15,13 +15,6 @@ var GameObject = function(x, y, height, width, color, speed, element) {
 	this.element = element;
 };
 
-// var testArray = []
-// testArray[0] = 1;
-// testArray[1] = 2;
-// console.log(testArray);
-// testArray.splice(0, 1);
-// console.log(testArray);
-
 // Array of pressed or not-pressed key states
 var move = {
 	up: false,
@@ -132,15 +125,13 @@ var loopGame = function() {
 			if (activeEnemies[i].y > gameHeight) {
 				$(item).hide();
 			} else if (activeEnemies[i].y < gameHeight) {
-				console.log(activeEnemies[i].y)
-				console.log(gameHeight);
 				activeEnemies[i].y += activeEnemies[i].speed;
 				$(item).css({"top": activeEnemies[i].y})
 			}
 		})
 	};
 	//Check for collisions
-
+	checkCollision();
 	//Update Game State
 	if (move.firing) {
 		fireBullet();
@@ -167,7 +158,7 @@ var createPlayer = function() {
 var fireBullet = function() {
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "allyBullet");
-	var bullet = new GameObject(player.x + 23, player.y - 16, 20, 5, "red", 10, bulletDiv);
+	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width":bullet.width, "height": bullet.height});
@@ -183,6 +174,26 @@ var createEnemy = function() {
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
 	setTimeout(createEnemy, 3000);
 	activeEnemies.push(enemy);
+};
+
+var checkCollision = function() {
+	if (activeBullets.length > 0 && activeEnemies.length > 0) {
+		for (var i=0; i < activeBullets.length; i++) {
+			for (var o=0; o < activeEnemies.length; o++) {
+				if (activeBullets[i].x + activeBullets[i].width < activeEnemies[o].x ||
+					activeBullets[i].x > activeEnemies[o].x + activeEnemies[o].width ||
+					activeBullets[i].y + activeBullets[i].height < activeEnemies[o].y ||
+					activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
+					// do nothing
+				} else {
+					activeEnemies[o].element.remove();
+					// for (let x=0; x < activeEnemies.length; x++) {
+					// 	activeEnemies[x].y = 40;
+					// }
+				}
+			}
+		}
+	}
 };
 
 $(document).ready(function(){

@@ -31,3 +31,7 @@ header {
 .allyBullet {
 	z-index: -2000	
 }
+
+.hide {
+	visibility: hidden;
+}

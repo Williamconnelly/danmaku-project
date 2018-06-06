@@ -143,7 +143,7 @@ var collision = function ($div1, $div2) {
     let xcoord1 = $div1.offset().left;
     let ycoord1 = $div1.offset().top;
 
-    let coord1 = $div1.offset();
+    // let coord1 = $div1.offset();
 
     let height1 = $div1.outerHeight(true);
     let width1 = $div1.outerWidth(true);
