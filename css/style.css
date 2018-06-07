@@ -83,6 +83,10 @@ header {
 	font-size: 20px;
 }
 
+#playerscore {
+	margin: 0;
+}
+
 .scorehud {
 	grid-area: "scorehud";
 	margin-left: 13.5%;

@@ -8,7 +8,7 @@ var activeEBullets = [];
 var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 var healthBar = $("#healthbar").width();
-console.log(healthBar);
+var score = 0;
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -112,7 +112,7 @@ var addFireRate = function () {
 	var index = activeEnemies.length -1;
 	setInterval(function() {
 		activeEnemies[index].fire();
-	}, getRandomNumber(1000, 4000));
+	}, getRandomNumber(1000, 3000));
 };
 
 var createEnemy = function() {
@@ -131,7 +131,7 @@ var createEnemy = function() {
 var enemyShoot = function(id) {
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "eBullet");
-		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "#71f442", 10, 0, bulletDiv);
+		var eBullet = new GameObject(id.x + 40, id.y + 60, 10, 5, "#71f442", 10, 0, bulletDiv);
 		$("#gameScreen").append(eBullet.element);
 		$(eBullet.element).css({"background-color": eBullet.color, "position": "absolute", "left": eBullet.x,
 	 "top": eBullet.y, "width": eBullet.width, "height": eBullet.height});
@@ -149,10 +149,9 @@ var checkGoodCollision = function() {
 					activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
 					// do nothing
 				} else {
-					console.log(activeEnemies);
+					score += 100;
 					activeEnemies[o].element.remove();
 					activeEnemies.splice(o, 1);
-					console.log(activeEnemies);
 					// activeBullets[i].element.remove();
 					// activeBullets.splice(i, 1);
 				}
@@ -189,8 +188,13 @@ var updateHealth = function() {
 		player.health = 0;
 	}
 	$("#playerhealth").text(player.health);
-	$("#healthbar").css("width", healthBar / (player.health / 500));
+	console.log(player.health / 500)
+	$("#healthbar").css("width", healthBar * (player.health / 500));
 };
+
+var updateScore = function() {
+	$("#playerscore").text(score);
+}
 
 var loopGame = function() {
 	//Player Input
@@ -276,9 +280,9 @@ var loopGame = function() {
 	if (player.health < 500) {
 		updateHealth();
 	};
-	// if (score > 0) {
-	// 	updateScore();
-	// };
+	if (score > 0) {
+		updateScore();
+	};
 	//Loop 
 	requestAnimationFrame(loopGame);
 };
