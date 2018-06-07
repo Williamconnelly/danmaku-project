@@ -7,6 +7,8 @@ var activeEnemies = [];
 var activeEBullets = [];
 var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
+var healthBar = $("#healthbar").width();
+console.log(healthBar);
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -157,7 +159,7 @@ var checkGoodCollision = function() {
 	}
 };
 
-// Checks or collisions between the enemies' bullets and the Player's position
+// Checks for collisions between the enemies' bullets and the Player's position
 var checkBadCollision = function() {
 	if (activeEBullets.length > 0) {
 		for (var i=0; i < activeEBullets.length; i++) {
@@ -177,6 +179,12 @@ var checkBadCollision = function() {
 
 var scrollBackground = function() {
 
+};
+
+// update healthbar width by percentage of player.heatlh
+var updateHealth = function() {
+	$("#playerhealth").text(player.health);
+	$("#healthbar").css("width", healthBar / (player.health / 500));
 };
 
 var loopGame = function() {
@@ -260,7 +268,12 @@ var loopGame = function() {
 	if (move.firing) {
 		fireBullet();
 	};
-
+	if (player.health < 500) {
+		updateHealth();
+	};
+	// if (score > 0) {
+	// 	updateScore();
+	// };
 	//Loop 
 	requestAnimationFrame(loopGame);
 };
