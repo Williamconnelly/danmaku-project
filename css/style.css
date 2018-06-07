@@ -1,5 +1,5 @@
 body {
-	background-color: darkgray;
+	background-color: #122A59;
 	font-family: 'Share Tech Mono', monospace;
 	position: relative;
 }
@@ -33,4 +33,24 @@ header {
 	background-image: url(../img/enemy-ship.png);
 	background-position: center;
 	background-size: 50px;
+}
+
+.board {
+    position: absolute;
+    top: 58px;
+    left: 1px;
+    height: 38.5em;
+    width: 12em;
+    border: 1px solid black;
+    text-align: center;
+    background-color: black;
+    border-radius: 20px;
+}
+
+.board h2 {
+	color: red;
+}
+
+#healthbar {
+
 }

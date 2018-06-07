@@ -8,7 +8,7 @@ var activeEBullets = [];
 var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 
-var GameObject = function(x, y, height, width, color, speed, element) {
+var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
 	this.y = y;
 	this.height = height;
@@ -16,6 +16,7 @@ var GameObject = function(x, y, height, width, color, speed, element) {
 	this.color = color;
 	this.speed = speed;
 	this.element = element;
+	this.health = health;
 	this.fire = function() {
 		enemyShoot(this);
 	}
@@ -83,7 +84,7 @@ var createPlayer = function() {
 	// Sets the playerDiv's ID
 	playerDiv.attr("id", "playerShip");
 	// Instantiates a new Game object and stores in "player"
-	player = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "transparent", 10, playerDiv);
+	player = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "transparent", 10, 500, playerDiv);
 	// Appends the new element to the gameScreen
 	$("#gameScreen").append(player.element);
 	// Alters the associated element's css properties with the values in the object
@@ -94,7 +95,7 @@ var createPlayer = function() {
 var fireBullet = function() {
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "allyBullet");
-	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, bulletDiv);
+	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, 0, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
@@ -116,9 +117,7 @@ var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
 	// Math.floor(Math.random() * gameWidth
-	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 50, 80, "purple", 0.5, enemyDiv);
-	console.log(enemy.x);
-	console.log(gameWidth);
+	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 50, 80, "purple", 0.5, 500, enemyDiv);
 	$("#gameScreen").append(enemy.element);
 	$(enemy.element).css({"position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
@@ -128,9 +127,10 @@ var createEnemy = function() {
 };
 
 var enemyShoot = function(id) {
+	console.log(player.health);
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "eBullet");
-		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "#71f442", 10, bulletDiv);
+		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "#71f442", 10, 0, bulletDiv);
 		$("#gameScreen").append(eBullet.element);
 		$(eBullet.element).css({"background-color": eBullet.color, "position": "absolute", "left": eBullet.x,
 	 "top": eBullet.y, "width": eBullet.width, "height": eBullet.height});
@@ -169,10 +169,14 @@ var checkBadCollision = function() {
 			} else {
 				// activeEnemies[o].element.attr("class", "hide");
 				// activeEnemies[o].element.attr("class", "hide");
-				console.log("You've been hit!");
+				player.health -= 20;
 			}
 		}
 	}
+};
+
+var scrollBackground = function() {
+
 };
 
 var loopGame = function() {
@@ -211,9 +215,12 @@ var loopGame = function() {
 		// console.log("Something is wrong");
 			break;
 	}
-	//Update All Positions
-	$(player.element).css({"left": player.x, "top": player.y});
 
+	//Update All Positions
+
+	// Update Player Position
+	$(player.element).css({"left": player.x, "top": player.y});
+	// Update Player Bullets
 	if (activeBullets.length > 0) {
 		$.each($('.allyBullet'), function(i, item){
 			if (activeBullets[i].y < 5) {
@@ -224,6 +231,7 @@ var loopGame = function() {
 			}
 		})
 	};
+	// Update Positions
 	if (activeEnemies.length > 0) {
 		$.each($(".enemy"), function(i, item){
 			if (activeEnemies[i].y > gameHeight - 50) {
@@ -234,6 +242,7 @@ var loopGame = function() {
 			}
 		})
 	};
+	// Update Enemy Bullets
 	if (activeEBullets.length > 0) {
 		$.each($('.eBullet'), function(i, item){
 			if (activeEBullets[i].y > gameHeight) {
