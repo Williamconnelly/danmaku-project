@@ -248,14 +248,15 @@ var loopGame = function() {
 	$(player.element).css({"left": player.x, "top": player.y});
 	// Update Player Bullets
 	if (activeBullets.length > 0) {
-		$.each($('.allyBullet'), function(i, item){
+		for (let i=0; i < activeBullets.length; i++) {
 			if (activeBullets[i].y < 5) {
-				$(item).hide();
+				activeBullets[i].element.remove();
+				activeBullets.splice(i, 1);
 			} else if (activeBullets[i].y < gameHeight) {
 				activeBullets[i].y -= activeBullets[i].speed;	
-				$(item).css({'top': activeBullets[i].y})
+				activeBullets[i].element.css({'top': activeBullets[i].y})
 			}
-		})
+		}
 	};
 	// Update Positions
 	if (activeEnemies.length > 0) {
