@@ -260,25 +260,35 @@ var loopGame = function() {
 	};
 	// Update Positions
 	if (activeEnemies.length > 0) {
-		$.each($(".enemy"), function(i, item){
+		for (let i=0; i < activeEnemies.length; i++) {
 			if (activeEnemies[i].y > gameHeight - 50) {
-				$(item).hide();
+				activeEnemies[i].element.remove();
+				activeEnemies.splice(i, 1);
 			} else if (activeEnemies[i].y < gameHeight) {
 				activeEnemies[i].y += activeEnemies[i].speed;
-				$(item).css({"top": activeEnemies[i].y})
+				activeEnemies[i].element.css({"top": activeEnemies[i].y})
 			}
-		})
+		}
 	};
 	// Update Enemy Bullets
 	if (activeEBullets.length > 0) {
-		$.each($('.eBullet'), function(i, item){
+		for (let i=0; i < activeEBullets.length; i++) {
 			if (activeEBullets[i].y > gameHeight) {
-				$(item).hide();
+				activeEBullets[i].element.remove();
+				activeEBullets.splice(i, 1);
 			} else if (activeEBullets[i].y < gameHeight) {
 				activeEBullets[i].y += activeEBullets[i].speed;	
-				$(item).css({'top': activeEBullets[i].y})
+				activeEBullets[i].element.css({'top': activeEBullets[i].y})
 			}
-		})
+		}
+		// $.each($('.eBullet'), function(i, item){
+		// 	if (activeEBullets[i].y > gameHeight) {
+		// 		$(item).hide();
+		// 	} else if (activeEBullets[i].y < gameHeight) {
+		// 		activeEBullets[i].y += activeEBullets[i].speed;	
+		// 		$(item).css({'top': activeEBullets[i].y})
+		// 	}
+		// })
 	};
 	//Check for collisions
 	checkGoodCollision();
@@ -294,6 +304,7 @@ var loopGame = function() {
 		updateScore();
 	};
 	//Loop 
+	console.log(activeEnemies);
 	requestAnimationFrame(loopGame);
 };
 
