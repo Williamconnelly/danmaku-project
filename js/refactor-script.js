@@ -183,6 +183,9 @@ var scrollBackground = function() {
 
 // update healthbar width by percentage of player.heatlh
 var updateHealth = function() {
+	if (player.health <= 0) {
+		player.health = 0;
+	}
 	$("#playerhealth").text(player.health);
 	$("#healthbar").css("width", healthBar / (player.health / 500));
 };
@@ -224,7 +227,7 @@ var loopGame = function() {
 			break;
 	}
 
-	//Update All Positions
+	//Update All Positions 
 
 	// Update Player Position
 	$(player.element).css({"left": player.x, "top": player.y});
