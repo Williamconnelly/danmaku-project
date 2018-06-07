@@ -9,6 +9,7 @@ var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 var healthBar = $("#healthbar").width();
 var score = 0;
+var highScore = 300;
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -170,7 +171,7 @@ var checkBadCollision = function() {
 				activeEBullets[i].y > player.y + player.height) {
 				// do nothing
 			} else {
-				player.health -= 20;
+				player.health -= 50;
 				activeEBullets[i].element.remove();
 				activeEBullets.splice(i, 1);
 			}
@@ -188,12 +189,20 @@ var updateHealth = function() {
 		player.health = 0;
 	}
 	$("#playerhealth").text(player.health);
-	console.log(player.health / 500)
 	$("#healthbar").css("width", healthBar * (player.health / 500));
 };
 
 var updateScore = function() {
 	$("#playerscore").text(score);
+	if (score > highScore) {
+		highScore = score
+		updateHighScore();
+	}
+}
+
+var updateHighScore = function() {
+	$("#highscore").text(highScore);
+	$("#highscore").css("color", "#13B619")
 }
 
 var loopGame = function() {
@@ -291,4 +300,5 @@ $(document).ready(function(){
 	createPlayer();
 	createEnemy();
 	requestAnimationFrame(loopGame);
+	$("#highscore").text(highScore);
 });
