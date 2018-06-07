@@ -142,22 +142,45 @@ var enemyShoot = function(id) {
 // Checks for collision between the Player's bullets and the enemy positions
 var checkGoodCollision = function() {
 	if (activeBullets.length > 0 && activeEnemies.length > 0) {
-		for (var i=0; i < activeBullets.length; i++) {
-			for (var o=0; o < activeEnemies.length; o++) {
-				if (activeBullets[i].x + activeBullets[i].width < activeEnemies[o].x ||
-					activeBullets[i].x > activeEnemies[o].x + activeEnemies[o].width ||
-					activeBullets[i].y + activeBullets[i].height < activeEnemies[o].y ||
-					activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
+		activeBullets.forEach(function(bulletItem, i) {
+			activeEnemies.forEach(function(enemyItem, o) {
+				if (bulletItem.x + bulletItem.width < enemyItem.x ||
+					bulletItem.x > enemyItem.x + enemyItem.width ||
+					bulletItem.y + bulletItem.height < enemyItem.y ||
+					bulletItem.y > enemyItem.y + enemyItem.height) {
 					// do nothing
 				} else {
-					score += 100;
-					activeEnemies[o].element.remove();
-					activeEnemies.splice(o, 1);
-					// activeBullets[i].element.remove();
-					// activeBullets.splice(i, 1);
+					bulletItem.element.remove();
+					activeBullets.splice(i, 1);
+					enemyItem.health -= 50;
+					if (enemyItem.health <= 0) {
+						enemyItem.element.remove();
+						activeEnemies.splice(o, 1);
+						score += 100;
+					}
 				}
-			}
-		}
+			}) 
+		});
+
+		// for (var i=0; i < activeBullets.length; i++) {
+		// 	for (var o=0; o < activeEnemies.length; o++) {
+		// 		if (activeBullets[i].x + activeBullets[i].width < activeEnemies[o].x ||
+		// 			activeBullets[i].x > activeEnemies[o].x + activeEnemies[o].width ||
+		// 			activeBullets[i].y + activeBullets[i].height < activeEnemies[o].y ||
+		// 			activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
+		// 			// do nothing
+		// 		} else {
+		// 			activeBullets[i].element.remove();
+		// 			activeBullets.splice(i, 1);
+		// 			activeEnemies[o].health -= 50;
+		// 			if (activeEnemies[o].health <= 0) {
+		// 				activeEnemies[o].element.remove();
+		// 				activeEnemies.splice(o, 1);
+		// 				score += 100;
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 };
 
@@ -180,6 +203,10 @@ var checkBadCollision = function() {
 };
 
 var scrollBackground = function() {
+
+};
+
+var endGame = function() {
 
 };
 
@@ -281,14 +308,6 @@ var loopGame = function() {
 				activeEBullets[i].element.css({'top': activeEBullets[i].y})
 			}
 		}
-		// $.each($('.eBullet'), function(i, item){
-		// 	if (activeEBullets[i].y > gameHeight) {
-		// 		$(item).hide();
-		// 	} else if (activeEBullets[i].y < gameHeight) {
-		// 		activeEBullets[i].y += activeEBullets[i].speed;	
-		// 		$(item).css({'top': activeEBullets[i].y})
-		// 	}
-		// })
 	};
 	//Check for collisions
 	checkGoodCollision();
@@ -304,7 +323,6 @@ var loopGame = function() {
 		updateScore();
 	};
 	//Loop 
-	console.log(activeEnemies);
 	requestAnimationFrame(loopGame);
 };
 
