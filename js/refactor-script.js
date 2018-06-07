@@ -115,7 +115,10 @@ var addFireRate = function () {
 var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
-	enemy = new GameObject(Math.floor(Math.random() * gameWidth), 0, 50, 80, "purple", 0.5, enemyDiv);
+	// Math.floor(Math.random() * gameWidth
+	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 50, 80, "purple", 0.5, enemyDiv);
+	console.log(enemy.x);
+	console.log(gameWidth);
 	$("#gameScreen").append(enemy.element);
 	$(enemy.element).css({"position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
@@ -134,6 +137,7 @@ var enemyShoot = function(id) {
 	activeEBullets.push(eBullet);
 };
 
+// Checks for collision between the Player's bullets and the enemy positions
 var checkGoodCollision = function() {
 	if (activeBullets.length > 0 && activeEnemies.length > 0) {
 		for (var i=0; i < activeBullets.length; i++) {
@@ -148,6 +152,24 @@ var checkGoodCollision = function() {
 					// activeEnemies[o].element.attr("class", "hide");
 					activeEnemies[o].element.remove();
 				}
+			}
+		}
+	}
+};
+
+// Checks or collisions between the enemies' bullets and the Player's position
+var checkBadCollision = function() {
+	if (activeEBullets.length > 0) {
+		for (var i=0; i < activeEBullets.length; i++) {
+			if (activeEBullets[i].x + activeEBullets[i].width < player.x ||
+				activeEBullets[i].x > player.x + player.width ||
+				activeEBullets[i].y + activeEBullets[i].height < player.y ||
+				activeEBullets[i].y > player.y + player.height) {
+				// do nothing
+			} else {
+				// activeEnemies[o].element.attr("class", "hide");
+				// activeEnemies[o].element.attr("class", "hide");
+				console.log("You've been hit!");
 			}
 		}
 	}
@@ -204,7 +226,7 @@ var loopGame = function() {
 	};
 	if (activeEnemies.length > 0) {
 		$.each($(".enemy"), function(i, item){
-			if (activeEnemies[i].y > gameHeight) {
+			if (activeEnemies[i].y > gameHeight - 50) {
 				$(item).hide();
 			} else if (activeEnemies[i].y < gameHeight) {
 				activeEnemies[i].y += activeEnemies[i].speed;
@@ -224,6 +246,7 @@ var loopGame = function() {
 	};
 	//Check for collisions
 	checkGoodCollision();
+	checkBadCollision();
 	//Update Game State
 	if (move.firing) {
 		fireBullet();
