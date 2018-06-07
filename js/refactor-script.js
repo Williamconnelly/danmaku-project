@@ -129,7 +129,6 @@ var createEnemy = function() {
 };
 
 var enemyShoot = function(id) {
-	console.log(player.health);
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "eBullet");
 		var eBullet = new GameObject(id.x + 40, id.y + 60, 5, 5, "#71f442", 10, 0, bulletDiv);
@@ -150,9 +149,12 @@ var checkGoodCollision = function() {
 					activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
 					// do nothing
 				} else {
-					// activeEnemies[o].element.attr("class", "hide");
-					// activeEnemies[o].element.attr("class", "hide");
+					console.log(activeEnemies);
 					activeEnemies[o].element.remove();
+					activeEnemies.splice(o, 1);
+					console.log(activeEnemies);
+					// activeBullets[i].element.remove();
+					// activeBullets.splice(i, 1);
 				}
 			}
 		}
@@ -169,9 +171,9 @@ var checkBadCollision = function() {
 				activeEBullets[i].y > player.y + player.height) {
 				// do nothing
 			} else {
-				// activeEnemies[o].element.attr("class", "hide");
-				// activeEnemies[o].element.attr("class", "hide");
 				player.health -= 20;
+				activeEBullets[i].element.remove();
+				activeEBullets.splice(i, 1);
 			}
 		}
 	}
