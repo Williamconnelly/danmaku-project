@@ -230,13 +230,17 @@ var updateScore = function() {
 
 var updateTime = function() {
 	gameTime += 1;
-	console.log(gameTime);
-	$("#gametime").text("0:" + gameTime);
+	$("#gametime").text(gameTime);
 	if (gameTime > 1000) {
 		spawnTimer = 1000;
 	} else if (gameTime > 3000) {
 		spawnTimer = 500;
 	}
+};
+
+var changeScreen = function() {
+	$("#instructions").addClass("removeDisplay");
+	$("#gameScreen").removeClass("removeDisplay");
 };
 
 var loopGame = function() {
