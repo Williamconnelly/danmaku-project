@@ -10,6 +10,9 @@ var gameWidth = $("#gameScreen").innerWidth();
 var healthBar = $("#healthbar").width();
 var score = 0;
 var highScore = 300;
+var loopHandle;
+var shootHandle;
+var spawnHandle;
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -93,7 +96,7 @@ var createPlayer = function() {
 	// Alters the associated element's css properties with the values in the object
 	$(player.element).css({"position": "absolute", "left": player.x,
 	 "top": player.y, "width": player.width, "height": player.height});
-}
+};
 
 var fireBullet = function() {
 	var bulletDiv = $('<div>');
@@ -111,7 +114,7 @@ var getRandomNumber = function(min, max) {
 
 var addFireRate = function () {
 	var index = activeEnemies.length -1;
-	setInterval(function() {
+	shootHandle = setInterval(function() {
 		activeEnemies[index].fire();
 	}, getRandomNumber(1000, 3000));
 };
@@ -126,7 +129,7 @@ var createEnemy = function() {
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
 	activeEnemies.push(enemy);
 	addFireRate();
-	setTimeout(createEnemy, 3000);
+	spawnHandle = setTimeout(createEnemy, 3000);
 };
 
 var enemyShoot = function(id) {
@@ -161,26 +164,6 @@ var checkGoodCollision = function() {
 				}
 			}) 
 		});
-
-		// for (var i=0; i < activeBullets.length; i++) {
-		// 	for (var o=0; o < activeEnemies.length; o++) {
-		// 		if (activeBullets[i].x + activeBullets[i].width < activeEnemies[o].x ||
-		// 			activeBullets[i].x > activeEnemies[o].x + activeEnemies[o].width ||
-		// 			activeBullets[i].y + activeBullets[i].height < activeEnemies[o].y ||
-		// 			activeBullets[i].y > activeEnemies[o].y + activeEnemies[o].height) {
-		// 			// do nothing
-		// 		} else {
-		// 			activeBullets[i].element.remove();
-		// 			activeBullets.splice(i, 1);
-		// 			activeEnemies[o].health -= 50;
-		// 			if (activeEnemies[o].health <= 0) {
-		// 				activeEnemies[o].element.remove();
-		// 				activeEnemies.splice(o, 1);
-		// 				score += 100;
-		// 			}
-		// 		}
-		// 	}
-		// }
 	}
 };
 
@@ -207,6 +190,19 @@ var scrollBackground = function() {
 };
 
 var endGame = function() {
+	console.log("Working");
+	window.cancelAnimationFrame(loopHandle);
+	clearInterval(shootHandle);
+	clearTimeout(spawnHandle);
+};
+
+var resetGame = function() {
+	numberOfBullets = 0;
+	numberOfEnemies = 0;
+	activeEnemies = [];
+	activeBullets = [];
+	activeEBullets = [];
+	score = 0;
 
 };
 
@@ -214,6 +210,8 @@ var endGame = function() {
 var updateHealth = function() {
 	if (player.health <= 0) {
 		player.health = 0;
+		window.cancelAnimationFrame(loopHandle);
+		endGame();
 	}
 	$("#playerhealth").text(player.health);
 	$("#healthbar").css("width", healthBar * (player.health / 500));
@@ -222,15 +220,15 @@ var updateHealth = function() {
 var updateScore = function() {
 	$("#playerscore").text(score);
 	if (score > highScore) {
-		highScore = score
+		highScore = score;
 		updateHighScore();
 	}
-}
+};
 
 var updateHighScore = function() {
 	$("#highscore").text(highScore);
 	$("#highscore").css("color", "#13B619")
-}
+};
 
 var loopGame = function() {
 	//Player Input
@@ -323,12 +321,15 @@ var loopGame = function() {
 		updateScore();
 	};
 	//Loop 
-	requestAnimationFrame(loopGame);
+	loopHandle = requestAnimationFrame(loopGame);
+	if (player.health === 0) {
+		endGame();
+	};
 };
 
 $(document).ready(function(){
 	createPlayer();
 	createEnemy();
-	requestAnimationFrame(loopGame);
+	loopHandle = requestAnimationFrame(loopGame);
 	$("#highscore").text(highScore);
 });
