@@ -125,7 +125,7 @@ var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
 	// Math.floor(Math.random() * gameWidth
-	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 50, 80, "purple", 0.5, 500, enemyDiv);
+	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 60, 70, "purple", 0.5, 500, enemyDiv);
 	$("#gameScreen").append(enemy.element);
 	$(enemy.element).css({"position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
@@ -238,9 +238,18 @@ var updateTime = function() {
 	}
 };
 
-var changeScreen = function() {
+// var changeScreen = function() {
+// 	$("#instructions").addClass("removeDisplay");
+// 	$("#gameScreen").removeClass("removeDisplay");
+// };
+
+var startGame = function() {
 	$("#instructions").addClass("removeDisplay");
 	$("#gameScreen").removeClass("removeDisplay");
+	createPlayer();
+	createEnemy();
+	loopHandle = requestAnimationFrame(loopGame);
+	$("#highscore").text(highScore);
 };
 
 var loopGame = function() {
@@ -341,8 +350,5 @@ var loopGame = function() {
 };
 
 $(document).ready(function(){
-	createPlayer();
-	createEnemy();
-	loopHandle = requestAnimationFrame(loopGame);
-	$("#highscore").text(highScore);
+	console.log("ready");
 });

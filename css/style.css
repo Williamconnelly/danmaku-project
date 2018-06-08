@@ -24,8 +24,13 @@ body {
 	border: 3px solid #C7DCEB;
 	margin-left: 1.3%;
 	color: white;
+	text-align: center;
 }
 
+#instructions h1 {
+
+};
+	
 #gameScreen {
 	background-image: url(../img/spacebg.png);
 	margin: auto;
@@ -57,7 +62,8 @@ header {
 .enemy {
 	background-image: url(../img/enemy-ship.png);
 	background-position: center;
-	background-size: 50px;
+	background-size: 60px;
+	background-repeat: no-repeat;
 }
 
 .hud {
