@@ -13,6 +13,8 @@ var highScore = 300;
 var loopHandle;
 var shootHandle;
 var spawnHandle;
+var gameTime = 0;
+var spawnTimer = 3000;
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -129,7 +131,7 @@ var createEnemy = function() {
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
 	activeEnemies.push(enemy);
 	addFireRate();
-	spawnHandle = setTimeout(createEnemy, 3000);
+	spawnHandle = setTimeout(createEnemy, spawnTimer);
 };
 
 var enemyShoot = function(id) {
@@ -163,7 +165,7 @@ var checkGoodCollision = function() {
 					}
 				}
 			}) 
-		});
+		})
 	}
 };
 
@@ -221,18 +223,24 @@ var updateScore = function() {
 	$("#playerscore").text(score);
 	if (score > highScore) {
 		highScore = score;
-		updateHighScore();
+		$("#highscore").text(highScore);
+		$("#highscore").css("color", "#13B619")
 	}
 };
 
-var updateHighScore = function() {
-	$("#highscore").text(highScore);
-	$("#highscore").css("color", "#13B619")
+var updateTime = function() {
+	gameTime += 1;
+	console.log(gameTime);
+	$("#gametime").text("0:" + gameTime);
+	if (gameTime > 1000) {
+		spawnTimer = 1000;
+	} else if (gameTime > 3000) {
+		spawnTimer = 500;
+	}
 };
 
 var loopGame = function() {
 	//Player Input
-	// console.log(player.x, player.y);
 	switch(true) {
 		case(move.up && !move.left && !move.right && player.y > 0):
 		player.y -= player.speed;
@@ -265,7 +273,7 @@ var loopGame = function() {
 		default:
 		// console.log("Something is wrong");
 			break;
-	}
+	};
 
 	//Update All Positions 
 
@@ -298,7 +306,7 @@ var loopGame = function() {
 	// Update Enemy Bullets
 	if (activeEBullets.length > 0) {
 		for (let i=0; i < activeEBullets.length; i++) {
-			if (activeEBullets[i].y > gameHeight) {
+			if (activeEBullets[i].y > gameHeight - 20) {
 				activeEBullets[i].element.remove();
 				activeEBullets.splice(i, 1);
 			} else if (activeEBullets[i].y < gameHeight) {
@@ -311,6 +319,7 @@ var loopGame = function() {
 	checkGoodCollision();
 	checkBadCollision();
 	//Update Game State
+	updateTime();
 	if (move.firing) {
 		fireBullet();
 	};
