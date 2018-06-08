@@ -346,5 +346,12 @@ var loopGame = function() {
 };
 
 $(document).ready(function(){
+	$(document).on("keypress", function(e) {
+		if (e.key === "Enter") {
+			startGame();
+			$(document).off("keypress");
+			$("#startButton").addClass("removeDisplay");
+		}
+	});
 	console.log("ready");
 });
