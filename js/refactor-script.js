@@ -238,13 +238,9 @@ var updateTime = function() {
 	}
 };
 
-// var changeScreen = function() {
-// 	$("#instructions").addClass("removeDisplay");
-// 	$("#gameScreen").removeClass("removeDisplay");
-// };
-
 var startGame = function() {
 	$("#instructions").addClass("removeDisplay");
+	$("#instructions").removeClass("gridclass");
 	$("#gameScreen").removeClass("removeDisplay");
 	createPlayer();
 	createEnemy();

@@ -19,26 +19,30 @@
 				<p>Time:</p>
 				<h3 id="gametime">0</h3>
 			</div>
-			<div id="instructions">
-				<h1>Instructions:</h1>
-				<div class="info">
-					<p>Press "j" to shoot</p>
-					<img src="img/j-button.png">
-					<img src="img/player-shoot.png">
-				</div>
-				<div class="info">
-					<p>Watch out for enemy fire!</p>
-					<img src="img/enemy-shoot.png"></p>
-				</div>
-				<div class="info">
+			<div id="instructions" class="gridclass">
+				<header class="infoheader">Instructions:</header>
+				<div class="player-note">
 					<p>This is your ship</p>
 					<img src="img/playership.png">
 				</div>
-				<div class="info">
-					<p>Move up, down, left, and right using the "wasd keys" respectively</p>
+				<div class="enemy-note">
+					<p>This is the enemy</p>
+					<img src="img/enemyship.png">
+				</div>
+				<div class="movement-note">
+					<p>Move up, down, left, and right using the "wasd" keys respectively</p>
 					<img src="img/wasd.png">
 				</div>
-				<div class="info">
+				<div class="playershoot-note">
+					<p>Press "j" to shoot</p>
+					<img id="j-button" src="img/j-button.png">
+					<img src="img/player-shoot.png">
+				</div>
+				<div class="enemyshoot-note">
+					<p>Watch out for enemy fire!</p>
+					<img src="img/enemy-shoot.png"></p>
+				</div>
+				<div class="health-note">
 					<p>You lose health if you are hit. If your health falls to 0, you lose!</p>
 					<img src="img/health-img.png">
 				</div>
