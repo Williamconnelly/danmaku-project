@@ -140,7 +140,7 @@ header {
 	font-size: 20px;
 }
 
-#startButton {
+.playButton {
 	text-align: center;
 	width: 80%;
 	border-radius: 10px;
@@ -148,7 +148,7 @@ header {
 	animation: glow 2000ms infinite;
 }
 
-#startButton p {
+.playButton p {
 	padding: 6%;
 }
 
@@ -178,4 +178,8 @@ header {
 
 .gridclass {
 	display: grid;
+}
+
+#endstats {
+	font-size: 2em;
 }

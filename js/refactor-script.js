@@ -1,20 +1,22 @@
 var player;
 var enemy;
 var numberOfBullets = 0;
+var enemiesDefeated = 0;
 var activeBullets = [];
-var numberOfEnemies = 0;
 var activeEnemies = [];
 var activeEBullets = [];
 var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 var healthBar = $("#healthbar").width();
 var score = 0;
-var highScore = 300;
+var highScore = 0;
 var loopHandle;
 var shootHandle;
 var spawnHandle;
 var gameTime = 0;
 var spawnTimer = 3000;
+var gameOn = false;
+var gamePlayed = false;
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -101,6 +103,7 @@ var createPlayer = function() {
 };
 
 var fireBullet = function() {
+	numberOfBullets += 1;
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "allyBullet");
 	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, 0, bulletDiv);
@@ -163,6 +166,7 @@ var checkGoodCollision = function() {
 						activeEnemies.splice(o, 1);
 						clearInterval(shootHandle);
 						score += 100;
+						enemiesDefeated +=1;
 					}
 				}
 			}) 
@@ -196,6 +200,12 @@ var endGame = function() {
 	window.cancelAnimationFrame(loopHandle);
 	clearInterval(shootHandle);
 	clearTimeout(spawnHandle);
+	$("#endstats").removeClass("removeDisplay");
+	$("#endtime").removeClass("removeDisplay").text("Time-Count: " + gameTime);
+	$("#endkill").removeClass("removeDisplay").text("Enemies Defeated: " + enemiesDefeated);
+	$("#endshot").removeClass("removeDisplay").text("Bullets Shots: " + numberOfBullets);
+	$("#replayButton").removeClass("removeDisplay");
+	gamePlayed = true;
 };
 
 var resetGame = function() {
@@ -204,8 +214,10 @@ var resetGame = function() {
 	activeEnemies = [];
 	activeBullets = [];
 	activeEBullets = [];
+	gameTime = 0;
 	score = 0;
-
+	$("#gameScreen").empty();
+	startGame();
 };
 
 // update healthbar width by percentage of player.heatlh
@@ -240,6 +252,7 @@ var updateTime = function() {
 
 var startGame = function() {
 	$("#instructions").addClass("removeDisplay");
+	$("#startButton").addClass("removeDisplay");
 	$("#instructions").removeClass("gridclass");
 	$("#gameScreen").removeClass("removeDisplay");
 	createPlayer();
@@ -347,10 +360,11 @@ var loopGame = function() {
 
 $(document).ready(function(){
 	$(document).on("keypress", function(e) {
-		if (e.key === "Enter") {
+		if (e.key === "Enter" && gameOn === false) {
+			gameOn = true;
 			startGame();
-			$(document).off("keypress");
-			$("#startButton").addClass("removeDisplay");
+		} else if (e.key === "Enter" && gamePlayed === true) {
+			resetGame();
 		}
 	});
 	console.log("ready");

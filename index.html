@@ -18,8 +18,11 @@
 				<h3 id="playerscore">0</h3>
 				<p>Time:</p>
 				<h3 id="gametime">0</h3>
-				<div id="startButton">
+				<div id="startButton" class="playButton">
 					<p>Press ENTER <br> to <br> PLAY</p>
+				</div>
+				<div id="replayButton" class="removeDisplay playButton">
+					<p>Press ENTER <br> to <br> REPLAY</p>
 				</div>
 			</div>
 			<div id="instructions" class="gridclass">
@@ -54,10 +57,10 @@
 			<div class="hud scorehud">
 				<h2>High Score: </h2>
 				<h3 id="highscore">0</h3>
-				<h4>Post-Game Stats:</h4>
-				<h4>Time-Count:</h4>
-				<h4>Enemies Defeated:</h4>
-				<h4>Bullets Shot:</h4>
+				<h4 id="endstats" class="removeDisplay">Post-Game Stats:</h4>
+				<h4 id="endtime" class="removeDisplay">Time-Count:</h4>
+				<h4 id="endkill" class="removeDisplay">Enemies Defeated:</h4>
+				<h4 id="endshot" class="removeDisplay">Bullets Shot:</h4>
 			</div>
 		</div>
 		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
