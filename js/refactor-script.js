@@ -42,19 +42,19 @@ var move = {
 // Activates Relevant Keys When Pressed
 $(document).keydown(function(e) {
 	switch(true) {
-		case(e.key === "w"):
+		case(e.key.toLowerCase() === "w"):
 		move.up = true;
 			break;
-		case(e.key === "s"):
+		case(e.key.toLowerCase() === "s"):
 		move.down = true;
 			break;
-		case(e.key === "a"):
+		case(e.key.toLowerCase() === "a"):
 		move.left = true;
 			break;
-		case(e.key === "d"):
+		case(e.key.toLowerCase() === "d"):
 		move.right = true;
 			break;
-		case(e.key === "j"):
+		case(e.key.toLowerCase() === "j"):
 		move.firing = true;
 			break;
 		default:
@@ -66,19 +66,19 @@ $(document).keydown(function(e) {
 // Deactivates Activated Keys When Released
 $(document).keyup(function(e) {
 	switch(true) {
-		case(e.key === "w"):
+		case(e.key.toLowerCase() === "w"):
 		move.up = false;
 			break;
-		case(e.key === "s"):
+		case(e.key.toLowerCase() === "s"):
 		move.down = false;
 			break;
-		case(e.key === "a"):
+		case(e.key.toLowerCase() === "a"):
 		move.left = false;
 			break;
-		case(e.key === "d"):
+		case(e.key.toLowerCase() === "d"):
 		move.right = false;
 			break;
-		case(e.key === "j"): 
+		case(e.key.toLowerCase() === "j"): 
 		move.firing = false;
 			default:
 		// console.log("Incorrect Key")
@@ -161,6 +161,7 @@ var checkGoodCollision = function() {
 					if (enemyItem.health <= 0) {
 						enemyItem.element.remove();
 						activeEnemies.splice(o, 1);
+						clearInterval(shootHandle);
 						score += 100;
 					}
 				}
@@ -192,7 +193,6 @@ var scrollBackground = function() {
 };
 
 var endGame = function() {
-	console.log("Working");
 	window.cancelAnimationFrame(loopHandle);
 	clearInterval(shootHandle);
 	clearTimeout(spawnHandle);
