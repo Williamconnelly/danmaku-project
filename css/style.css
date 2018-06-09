@@ -96,7 +96,7 @@ header {
 }
 
 #player2Ship {
-	background-image: url(../img/player-ship.png);
+	background-image: url(../img/player2-ship.png);
 	background-position: center;
 	background-size: 50px;
 }
@@ -140,6 +140,13 @@ header {
 	margin-bottom: 0.3em;
 }
 
+#player2health {
+	font-size: 2.3em;
+	color: #fe8223;
+	margin: 0;
+	margin-bottom: 0.3em;
+}
+
 .playerhud p {
 	margin-top: 40px;
 	color: white;
@@ -173,6 +180,15 @@ header {
 	height: 10px;
 	width: 80%;
 	background-color: #D90000;
+	text-align: left;
+	margin-left: 1.3em;
+	border: 2px solid #C7DCEB;
+}
+
+#p2healthbar {
+	height: 10px;
+	width: 80%;
+	background-color: #fe8223;
 	text-align: left;
 	margin-left: 1.3em;
 	border: 2px solid #C7DCEB;

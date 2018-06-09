@@ -69,6 +69,11 @@ $(document).keydown(function(e) {
 		case(e.key.toLowerCase() === "j"):
 		move.firing = true;
 			break;
+		default:
+		// console.log("Incorrect Key")
+			break;
+	}
+	switch(true) {
 		// Player 2 Movement
 		case(e.key.toLowerCase() === "arrowup"):
 		e.preventDefault();
@@ -87,7 +92,7 @@ $(document).keydown(function(e) {
 		move2.right = true;
 			break;
 		case(e.key.toLowerCase() === "l"):
-		e.preventDefault();
+		// e.preventDefault();
 		move2.firing = true;
 			break;
 		default:
@@ -115,6 +120,11 @@ $(document).keyup(function(e) {
 		case(e.key.toLowerCase() === "j"): 
 		move.firing = false;
 			break;
+		default:
+		// console.log("Incorrect Key")
+			break;
+	}
+	switch(true) {
 		// Player 2 Movement
 		case(e.key.toLowerCase() === "arrowup"):
 		move2.up = false;
@@ -138,15 +148,15 @@ $(document).keyup(function(e) {
 });
 
 var createPlayer = function() {
-	// Makes a new div and stores in playerDiv
+	// Creates a new div
 	var playerDiv = $('<div>');
-	// Sets the playerDiv's ID
+	// Sets the new div's id
 	playerDiv.attr("id", "playerShip");
-	// Instantiates a new Game object and stores in "player"
+	// Creates a new Game Object for the Player
 	player = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "transparent", 10, 500, playerDiv);
-	// Appends the new element to the gameScreen
+	// Appends the div to the game screen
 	$("#gameScreen").append(player.element);
-	// Alters the associated element's css properties with the values in the object
+	// Sets the appended div's properties to those of the Player's
 	$(player.element).css({"position": "absolute", "left": player.x,
 	 "top": player.y, "width": player.width, "height": player.height});
 };
@@ -161,21 +171,23 @@ var createPlayer2 = function () {
 }
 
 var fireBullet = function() {
-	numberOfBullets += 1;
+	if (player.health > 0) {
+		numberOfBullets += 1;
 	var bulletDiv = $('<div>');
-	bulletDiv.attr("class", "allyBullet");
-	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, 0, bulletDiv);
+	bulletDiv.attr("class", "playerBullet");
+	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "#FF0000", 10, 0, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
 	activeBullets.push(bullet);
+	}
 };
 
 var fireBullet2 = function() {
 	numberOfBullets += 1;
 	var bulletDiv = $('<div>');
-	bulletDiv.attr("class", "allyBullet");
-	var bullet = new GameObject(player2.x + 23, player2.y - 16, 5, 5, "orange", 10, 0, bulletDiv);
+	bulletDiv.attr("class", "player2Bullet");
+	var bullet = new GameObject(player2.x + 23, player2.y - 16, 5, 5, "#0059FF", 10, 0, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
@@ -261,6 +273,23 @@ var checkBadCollision = function() {
 	}
 };
 
+var checkBadCollision2 = function() {
+	if (activeEBullets.length > 0) {
+		for (var i=0; i < activeEBullets.length; i++) {
+			if (activeEBullets[i].x + activeEBullets[i].width < player2.x ||
+				activeEBullets[i].x > player2.x + player2.width ||
+				activeEBullets[i].y + activeEBullets[i].height < player2.y ||
+				activeEBullets[i].y > player2.y + player2.height) {
+				// do nothing
+			} else {
+				player2.health -= 50;
+				activeEBullets[i].element.remove();
+				activeEBullets.splice(i, 1);
+			}
+		}
+	}
+};
+
 var scrollBackground = function() {
 
 };
@@ -269,7 +298,6 @@ var endGame = function() {
 	window.cancelAnimationFrame(loopHandle);
 	clearInterval(shootHandle);
 	clearTimeout(spawnHandle);
-	console.log(score, highScore);
 	if (score >= highScore) {
 		$("#newScore").removeClass("removeDisplay");
 	}
@@ -308,13 +336,10 @@ var resetGame = function() {
 
 // update healthbar width by percentage of player.heatlh
 var updateHealth = function() {
-	if (player.health <= 0) {
-		player.health = 0;
-		window.cancelAnimationFrame(loopHandle);
-		endGame();
-	}
 	$("#playerhealth").text(player.health);
 	$("#healthbar").css("width", healthBar * (player.health / 500));
+	$("#player2health").text(player2.health);
+	$("#p2healthbar").css("width", healthBar * (player2.health / 500));
 };
 
 var updateScore = function() {
@@ -467,6 +492,7 @@ var loopGame = function() {
 	//Check for collisions
 	checkGoodCollision();
 	checkBadCollision();
+	checkBadCollision2();
 	//Update Game State
 	updateTime();
 	if (move.firing) {
@@ -475,7 +501,7 @@ var loopGame = function() {
 	if (move2.firing) {
 		fireBullet2();
 	}
-	if (player.health < 500) {
+	if (player.health < 500 || player2.health < 500) {
 		updateHealth();
 	};
 	if (score > 0) {
@@ -483,7 +509,20 @@ var loopGame = function() {
 	};
 	//Loop 
 	loopHandle = requestAnimationFrame(loopGame);
-	if (player.health === 0) {
+	if (secondPlayer === true) {
+		if (player.health <= 0 && player2.health > 0) {
+			player.element.remove();
+		} else if (player.health > 0 && player2.health <= 0) {
+			player2.element.remove();
+		} else if (player.health <= 0 && player2.health <= 0) {
+			player.health = 0;
+			player2.health = 0;
+			window.cancelAnimationFrame(loopHandle);
+			endGame();
+		}
+	} else if (player.health <= 0) {
+		player.health = 0;
+		window.cancelAnimationFrame(loopHandle);
 		endGame();
 	};
 };
