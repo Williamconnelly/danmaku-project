@@ -41,9 +41,18 @@ var move = {
 	firing: false
 };
 
+var move2 = {
+	up: false,
+	down: false,
+	left: false,
+	right: false,
+	firing: false
+}
+
 // Activates Relevant Keys When Pressed
 $(document).keydown(function(e) {
 	switch(true) {
+		// Player 1 Movement
 		case(e.key.toLowerCase() === "w"):
 		move.up = true;
 			break;
@@ -59,6 +68,27 @@ $(document).keydown(function(e) {
 		case(e.key.toLowerCase() === "j"):
 		move.firing = true;
 			break;
+		// Player 2 Movement
+		case(e.key.toLowerCase() === "arrowup"):
+		e.preventDefault();
+		move2.up = true;
+			break;
+		case(e.key.toLowerCase() === "arrowdown"):
+		e.preventDefault();
+		move2.down = true;
+			break;
+		case(e.key.toLowerCase() === "arrowleft"):
+		e.preventDefault();
+		move2.left = true;
+			break;
+		case(e.key.toLowerCase() === "arrowright"):
+		e.preventDefault();
+		move2.right = true;
+			break;
+		case(e.key.toLowerCase() === "l"):
+		e.preventDefault();
+		move2.firing = true;
+			break;
 		default:
 		// console.log("Incorrect Key")
 			break;
@@ -68,6 +98,7 @@ $(document).keydown(function(e) {
 // Deactivates Activated Keys When Released
 $(document).keyup(function(e) {
 	switch(true) {
+		// Player 1 Movement
 		case(e.key.toLowerCase() === "w"):
 		move.up = false;
 			break;
@@ -82,7 +113,24 @@ $(document).keyup(function(e) {
 			break;
 		case(e.key.toLowerCase() === "j"): 
 		move.firing = false;
-			default:
+			break;
+		// Player 2 Movement
+		case(e.key.toLowerCase() === "arrowup"):
+		move2.up = false;
+			break;
+		case(e.key.toLowerCase() === "arrowdown"):
+		move2.down = false;
+			break;
+		case(e.key.toLowerCase() === "arrowleft"):
+		move2.left = false;
+			break;
+		case(e.key.toLowerCase() === "arrowright"):
+		move2.right = false;
+			break;
+		case(e.key.toLowerCase() === "l"): 
+		move2.firing = false;
+			break;
+		default:
 		// console.log("Incorrect Key")
 			break;
 	}
@@ -279,6 +327,7 @@ var startGame = function() {
 
 var loopGame = function() {
 	//Player Input
+	console.log(move2);
 	switch(true) {
 		case(move.up && !move.left && !move.right && player.y > 0):
 		player.y -= player.speed;
