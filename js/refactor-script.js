@@ -208,7 +208,7 @@ var endGame = function() {
 	$("#endstats").removeClass("removeDisplay");
 	$("#endtime").removeClass("removeDisplay").text("Time-Count: " + gameTime);
 	$("#endkill").removeClass("removeDisplay").text("Enemies Defeated: " + enemiesDefeated);
-	$("#endshot").removeClass("removeDisplay").text("Bullets Shots: " + numberOfBullets);
+	$("#endshot").removeClass("removeDisplay").text("Bullets Shot: " + numberOfBullets);
 	$("#replayButton").removeClass("removeDisplay");
 	$("#gameScreen").append("")
 	gamePlayed = true;
@@ -216,7 +216,7 @@ var endGame = function() {
 
 var resetGame = function() {
 	numberOfBullets = 0;
-	numberOfEnemies = 0;
+	enemiesDefeated = 0;
 	activeEnemies = [];
 	activeBullets = [];
 	activeEBullets = [];
