@@ -204,11 +204,13 @@ var endGame = function() {
 	if (score >= highScore) {
 		$("#newScore").removeClass("removeDisplay");
 	}
+	$("#gameOver").removeClass("removeDisplay");
 	$("#endstats").removeClass("removeDisplay");
 	$("#endtime").removeClass("removeDisplay").text("Time-Count: " + gameTime);
 	$("#endkill").removeClass("removeDisplay").text("Enemies Defeated: " + enemiesDefeated);
 	$("#endshot").removeClass("removeDisplay").text("Bullets Shots: " + numberOfBullets);
 	$("#replayButton").removeClass("removeDisplay");
+	$("#gameScreen").append("")
 	gamePlayed = true;
 };
 
@@ -227,7 +229,11 @@ var resetGame = function() {
 	$("#highscore").css("color", "white")
 	$("#playerscore").text(score);
 	$("#newScore").addClass("removeDisplay");
+	$("#replayButton").addClass("removeDisplay");
+	$("#gameOver").addClass("removeDisplay");
 	$("#gameScreen").empty();
+	$("#gameScreen").append("<div id='gameOver' class='removeDisplay'><h1>Game Over</h1></div>");
+	gamePlayed = false;
 	startGame();
 };
 

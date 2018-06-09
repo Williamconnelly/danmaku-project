@@ -187,3 +187,19 @@ header {
 .highscore {
 	color: #13B619;
 }
+
+#gameOver {
+	background-color: transparent;
+	width: 70vw;
+	height: 85vh;
+	position: relative;
+	font-size: 6em;
+	text-align: center;
+	color: #B20000;
+	z-index: 300;
+}
+
+#gameOver h1{
+	margin: 0;
+	margin-top: 14%;
+}
