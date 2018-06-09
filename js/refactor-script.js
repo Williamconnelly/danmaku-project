@@ -200,6 +200,10 @@ var endGame = function() {
 	window.cancelAnimationFrame(loopHandle);
 	clearInterval(shootHandle);
 	clearTimeout(spawnHandle);
+	console.log(score, highScore);
+	if (score >= highScore) {
+		$("#newScore").removeClass("removeDisplay");
+	}
 	$("#endstats").removeClass("removeDisplay");
 	$("#endtime").removeClass("removeDisplay").text("Time-Count: " + gameTime);
 	$("#endkill").removeClass("removeDisplay").text("Enemies Defeated: " + enemiesDefeated);
@@ -216,6 +220,13 @@ var resetGame = function() {
 	activeEBullets = [];
 	gameTime = 0;
 	score = 0;
+	spawnTimer = 3000;
+	player.health = 500;
+	$("#playerhealth").text(player.health);
+	$("#healthbar").css("width", healthBar * (player.health / 500));
+	$("#highscore").css("color", "white")
+	$("#playerscore").text(score);
+	$("#newScore").addClass("removeDisplay");
 	$("#gameScreen").empty();
 	startGame();
 };
@@ -235,8 +246,7 @@ var updateScore = function() {
 	$("#playerscore").text(score);
 	if (score > highScore) {
 		highScore = score;
-		$("#highscore").text(highScore);
-		$("#highscore").css("color", "#13B619")
+		$("#highscore").css("color", "#13B619").text(highScore);
 	}
 };
 

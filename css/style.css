@@ -183,3 +183,7 @@ header {
 #endstats {
 	font-size: 2em;
 }
+
+.highscore {
+	color: #13B619;
+}
