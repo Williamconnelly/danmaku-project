@@ -95,6 +95,12 @@ header {
 	background-size: 50px;
 }
 
+#player2Ship {
+	background-image: url(../img/player-ship.png);
+	background-position: center;
+	background-size: 50px;
+}
+
 .enemy {
 	background-image: url(../img/enemy-ship.png);
 	background-position: center;

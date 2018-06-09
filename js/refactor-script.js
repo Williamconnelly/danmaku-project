@@ -17,6 +17,7 @@ var gameTime = 0;
 var spawnTimer = 3000;
 var gameOn = false;
 var gamePlayed = false;
+var secondPlayer = false;
 
 var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.x = x;
@@ -150,11 +151,31 @@ var createPlayer = function() {
 	 "top": player.y, "width": player.width, "height": player.height});
 };
 
+var createPlayer2 = function () {
+	var playerDiv = $('<div>');
+	playerDiv.attr("id", "player2Ship");
+	player2 = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "transparent", 10, 500, playerDiv);
+	$("#gameScreen").append(player2.element);
+	$(player2.element).css({"position": "absolute", "left": player2.x,
+	 "top": player2.y, "width": player2.width, "height": player2.height});
+}
+
 var fireBullet = function() {
 	numberOfBullets += 1;
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "allyBullet");
 	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "red", 10, 0, bulletDiv);
+	$("#gameScreen").append(bullet.element);
+	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
+	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
+	activeBullets.push(bullet);
+};
+
+var fireBullet2 = function() {
+	numberOfBullets += 1;
+	var bulletDiv = $('<div>');
+	bulletDiv.attr("class", "allyBullet");
+	var bullet = new GameObject(player2.x + 23, player2.y - 16, 5, 5, "orange", 10, 0, bulletDiv);
 	$("#gameScreen").append(bullet.element);
 	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
@@ -320,6 +341,8 @@ var startGame = function() {
 	$("#instructions").removeClass("gridclass");
 	$("#gameScreen").removeClass("removeDisplay");
 	createPlayer();
+	createPlayer2();
+	secondPlayer = true;
 	createEnemy();
 	loopHandle = requestAnimationFrame(loopGame);
 	$("#highscore").text(highScore);
@@ -357,44 +380,54 @@ var loopGame = function() {
 		player.y += player.speed;
 		player.x -= player.speed;
 			break;
-		// Player 2 Movement
-		case(move2.up && !move2.left && !move2.right && player2.y > 0):
-		player2.y -= player2.speed;
-			break;
-		case(move2.down && !move2.left && !move2.right && player2.y + player2.height < gameHeight - 3): 
-		player2.y += player2.speed;
-			break;
-		case(move2.left && !move2.up && !move2.down && player2.x > 0):
-		player2.x -= player2.speed;
-			break;
-		case(move2.right && !move2.up && !move2.down && player2.x + player2.width < gameWidth):
-		player2.x += player2.speed;
-			break;
-		case(move2.up && move2.right && player2.y > 0 && player2.x + player2.width < gameWidth):
-		player2.y -= player2.speed;
-		player2.x += player2.speed;
-			break;
-		case(move2.up && move2.left && player2.y > 0 && player2.x > 0):
-		player2.y -= player2.speed;
-		player2.x -= player2.speed;
-			break;
-		case(move2.down && move2.right && player2.y + player2.height < gameHeight - 3 && player2.x + player2.width < gameWidth):
-		player2.y += player2.speed;
-		player2.x += player2.speed;
-			break;
-		case(move2.down && move2.left && player2.y + player2.height < gameHeight - 3 && player2.x > 0):
-		player2.y += player2.speed;
-		player2.x -= player2.speed;
-			break;
 		default:
 		// console.log("Something is wrong");
 			break;
 	};
+	// Player 2 Movement
+	if (secondPlayer === true) {
+		switch(true) {
+			case(move2.up && !move2.left && !move2.right && player2.y > 0):
+			player2.y -= player2.speed;
+				break;
+			case(move2.down && !move2.left && !move2.right && player2.y + player2.height < gameHeight - 3): 
+			player2.y += player2.speed;
+				break;
+			case(move2.left && !move2.up && !move2.down && player2.x > 0):
+			player2.x -= player2.speed;
+				break;
+			case(move2.right && !move2.up && !move2.down && player2.x + player2.width < gameWidth):
+			player2.x += player2.speed;
+				break;
+			case(move2.up && move2.right && player2.y > 0 && player2.x + player2.width < gameWidth):
+			player2.y -= player2.speed;
+			player2.x += player2.speed;
+				break;
+			case(move2.up && move2.left && player2.y > 0 && player2.x > 0):
+			player2.y -= player2.speed;
+			player2.x -= player2.speed;
+				break;
+			case(move2.down && move2.right && player2.y + player2.height < gameHeight - 3 && player2.x + player2.width < gameWidth):
+			player2.y += player2.speed;
+			player2.x += player2.speed;
+				break;
+			case(move2.down && move2.left && player2.y + player2.height < gameHeight - 3 && player2.x > 0):
+			player2.y += player2.speed;
+			player2.x -= player2.speed;
+				break;
+			default:
+			// console.log("Something is wrong");
+				break;
+		};
+	}
 
 	//Update All Positions 
 
-	// Update Player Position
+	// Update Player Positions
 	$(player.element).css({"left": player.x, "top": player.y});
+	if (secondPlayer === true) {
+		$(player2.element).css({"left": player2.x, "top": player2.y});
+	}
 	// Update Player Bullets
 	if (activeBullets.length > 0) {
 		for (let i=0; i < activeBullets.length; i++) {
@@ -439,6 +472,9 @@ var loopGame = function() {
 	if (move.firing) {
 		fireBullet();
 	};
+	if (move2.firing) {
+		fireBullet2();
+	}
 	if (player.health < 500) {
 		updateHealth();
 	};
