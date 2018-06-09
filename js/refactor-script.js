@@ -327,8 +327,8 @@ var startGame = function() {
 
 var loopGame = function() {
 	//Player Input
-	console.log(move2);
 	switch(true) {
+		// Player 1 Movement
 		case(move.up && !move.left && !move.right && player.y > 0):
 		player.y -= player.speed;
 			break;
@@ -356,6 +356,35 @@ var loopGame = function() {
 		case(move.down && move.left && player.y + player.height < gameHeight - 3 && player.x > 0):
 		player.y += player.speed;
 		player.x -= player.speed;
+			break;
+		// Player 2 Movement
+		case(move2.up && !move2.left && !move2.right && player2.y > 0):
+		player2.y -= player2.speed;
+			break;
+		case(move2.down && !move2.left && !move2.right && player2.y + player2.height < gameHeight - 3): 
+		player2.y += player2.speed;
+			break;
+		case(move2.left && !move2.up && !move2.down && player2.x > 0):
+		player2.x -= player2.speed;
+			break;
+		case(move2.right && !move2.up && !move2.down && player2.x + player2.width < gameWidth):
+		player2.x += player2.speed;
+			break;
+		case(move2.up && move2.right && player2.y > 0 && player2.x + player2.width < gameWidth):
+		player2.y -= player2.speed;
+		player2.x += player2.speed;
+			break;
+		case(move2.up && move2.left && player2.y > 0 && player2.x > 0):
+		player2.y -= player2.speed;
+		player2.x -= player2.speed;
+			break;
+		case(move2.down && move2.right && player2.y + player2.height < gameHeight - 3 && player2.x + player2.width < gameWidth):
+		player2.y += player2.speed;
+		player2.x += player2.speed;
+			break;
+		case(move2.down && move2.left && player2.y + player2.height < gameHeight - 3 && player2.x > 0):
+		player2.y += player2.speed;
+		player2.x -= player2.speed;
 			break;
 		default:
 		// console.log("Something is wrong");
