@@ -19,7 +19,7 @@ var gameOn = false;
 var gamePlayed = false;
 var secondPlayer = false;
 
-var GameObject = function(x, y, height, width, color, speed, health, element) {
+var GameObject = function(x, y, height, width, color, speed, health, element, trajectory) {
 	this.x = x;
 	this.y = y;
 	this.height = height;
@@ -31,6 +31,7 @@ var GameObject = function(x, y, height, width, color, speed, health, element) {
 	this.fire = function() {
 		enemyShoot(this);
 	}
+	this.trajectory = trajectory;
 };
 
 // Boolean array of pressed or not-pressed key states. When true, a movement command is issued.
@@ -210,8 +211,7 @@ var addFireRate = function () {
 var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
-	// Math.floor(Math.random() * gameWidth
-	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 60, 70, "purple", 0.5, 500, enemyDiv);
+	enemy = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 60, 70, "transparent", 0.5, 500, enemyDiv);
 	$("#gameScreen").append(enemy.element);
 	$(enemy.element).css({"position": "absolute", "left": enemy.x,
 	 "top": enemy.y, "width":enemy.width, "height": enemy.height});
@@ -221,9 +221,14 @@ var createEnemy = function() {
 };
 
 var enemyShoot = function(id) {
+	if (gameTime < 1500) {
+		var randomBullet = 1;
+	} else {
+		var randomBullet = Math.floor(Math.random() * 3) + 1;
+	}
 	var bulletDiv = $('<div>');
 	bulletDiv.attr("class", "eBullet");
-		var eBullet = new GameObject(id.x + 40, id.y + 60, 10, 5, "#71f442", 10, 0, bulletDiv);
+		var eBullet = new GameObject(id.x + 40, id.y + 60, 10, 5, "#71f442", 10, 0, bulletDiv, randomBullet);
 		$("#gameScreen").append(eBullet.element);
 		$(eBullet.element).css({"background-color": eBullet.color, "position": "absolute", "left": eBullet.x,
 	 "top": eBullet.y, "width": eBullet.width, "height": eBullet.height});
@@ -325,6 +330,8 @@ var resetGame = function() {
 	player.health = 500;
 	$("#playerhealth").text(player.health);
 	$("#healthbar").css("width", healthBar * (player.health / 500));
+	$("#player2health").text(player.health);
+	$("#p2healthbar").css("width", healthBar * (player.health / 500));
 	$("#highscore").css("color", "white")
 	$("#playerscore").text(score);
 	$("#newScore").addClass("removeDisplay");
@@ -354,6 +361,7 @@ var updateScore = function() {
 	}
 };
 
+// Increments the gameTime each loop, changes time display, and governs enemy spawn rate based on the game's length.
 var updateTime = function() {
 	gameTime += 1;
 	$("#gametime").text(gameTime);
@@ -361,6 +369,8 @@ var updateTime = function() {
 		spawnTimer = 1000;
 	} else if (gameTime > 3000) {
 		spawnTimer = 500;
+	} else if (gameTime > 6000) {
+		spawnTimer = 300;
 	}
 };
 
@@ -488,12 +498,21 @@ var loopGame = function() {
 	// Update Enemy Bullets
 	if (activeEBullets.length > 0) {
 		for (let i=0; i < activeEBullets.length; i++) {
+			console.log(activeEBullets[i].trajectory);
 			if (activeEBullets[i].y > gameHeight - 20) {
 				activeEBullets[i].element.remove();
 				activeEBullets.splice(i, 1);
 			} else if (activeEBullets[i].y < gameHeight) {
-				activeEBullets[i].y += activeEBullets[i].speed;	
-				activeEBullets[i].element.css({'top': activeEBullets[i].y})
+				if (activeEBullets[i].trajectory === 1) {
+					activeEBullets[i].y += activeEBullets[i].speed;
+				} else if (activeEBullets[i].trajectory === 2) {
+					activeEBullets[i].y += activeEBullets[i].speed;
+					activeEBullets[i].x -= activeEBullets[i].speed / 2;
+				} else {
+					activeEBullets[i].y += activeEBullets[i].speed;
+					activeEBullets[i].x += activeEBullets[i].speed / 2;
+				}
+				activeEBullets[i].element.css({'top': activeEBullets[i].y, "left": activeEBullets[i].x})
 			}
 		}
 	};
@@ -553,7 +572,7 @@ $(document).ready(function(){
 			$("#p2healthbar").removeClass("removeDisplay");
 			$("#player2health").removeClass("removeDisplay");
 			$("#player2-information").removeClass("removeDisplay");
-			$("#join-button").css("animation", "glow 2000ms infinite").text("Player 2 Ready!");
+			$("#join-button").css("animation", "glow 2000ms infinite").text("Player 2 READY!");
 			$("#join-button").css({"padding-top": "18%"});
 		}
 	});
