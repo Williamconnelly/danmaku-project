@@ -228,6 +228,14 @@ header {
 	color: #13B619;
 }
 
+.powerUp {
+	background-image: url(../img/power-up.png);
+	background-position: center;
+	background-size: 50px;
+	animation: glow 2000ms infinite;
+	border-radius: 30px;
+}
+
 #gameOver {
 	background-color: transparent;
 	width: 70vw;

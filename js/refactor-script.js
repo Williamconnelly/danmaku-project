@@ -18,6 +18,8 @@ var spawnTimer = 3000;
 var gameOn = false;
 var gamePlayed = false;
 var secondPlayer = false;
+var activePowerUps = [];
+var boost = false;
 
 var GameObject = function(x, y, height, width, color, speed, health, element, trajectory) {
 	this.x = x;
@@ -165,18 +167,27 @@ var createPlayer = function() {
 var createPlayer2 = function () {
 	var playerDiv = $('<div>');
 	playerDiv.attr("id", "player2Ship");
-	player2 = new GameObject(gameWidth / 2 - 25	, 500, 50, 50, "transparent", 10, 500, playerDiv);
+	player2 = new GameObject(gameWidth / 2 + 100, 500, 50, 50, "transparent", 10, 500, playerDiv);
 	$("#gameScreen").append(player2.element);
 	$(player2.element).css({"position": "absolute", "left": player2.x,
 	 "top": player2.y, "width": player2.width, "height": player2.height});
-}
+};
 
 var fireBullet = function() {
+	if (boost === false) {
+		var bulletColor = "#FF0000";
+		var bulletWidth = 5;
+		var bulletHeight = 5;
+	} else {
+		var bulletColor = getRandomColor;
+		var bulletWidth = 5;
+		var bulletHeight = 20;
+	};
 	if (player.health > 0) {
 		numberOfBullets += 1;
 		var bulletDiv = $('<div>');
 		bulletDiv.attr("class", "playerBullet");
-		var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "#FF0000", 10, 0, bulletDiv);
+		var bullet = new GameObject(player.x + 23, player.y - 16, bulletHeight, bulletWidth, bulletColor, 10, 0, bulletDiv);
 		$("#gameScreen").append(bullet.element);
 		$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 		 "top": bullet.y, "width": bullet.width, "height": bullet.height});
@@ -185,11 +196,20 @@ var fireBullet = function() {
 };
 
 var fireBullet2 = function() {
+	if (boost === false) {
+		var bulletColor = "#0059FF";
+		var bulletWidth = 5;
+		var bulletHeight = 5;
+	} else {
+		var bulletColor = getRandomColor;
+		var bulletWidth = 5;
+		var bulletHeight = 20;
+	};
 	if (player2.health > 0) {
 		numberOfBullets += 1;
 		var bulletDiv = $('<div>');
 		bulletDiv.attr("class", "player2Bullet");
-		var bullet = new GameObject(player2.x + 23, player2.y - 16, 5, 5, "#0059FF", 10, 0, bulletDiv);
+		var bullet = new GameObject(player2.x + 23, player2.y - 16, bulletHeight, bulletWidth, bulletColor, 10, 0, bulletDiv);
 		$("#gameScreen").append(bullet.element);
 		$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
 		 "top": bullet.y, "width": bullet.width, "height": bullet.height});
@@ -199,6 +219,12 @@ var fireBullet2 = function() {
 
 var getRandomNumber = function(min, max) {
 	return Math.floor(Math.random() * max) + min;
+};
+
+var getRandomColor = function() {
+	var rainbow = ["#ADD5F7", "#FFFFFF"]
+	let randomColor = Math.floor(Math.random() * rainbow.length);
+	return rainbow[randomColor];
 };
 
 var addFireRate = function () {
@@ -235,20 +261,40 @@ var enemyShoot = function(id) {
 	activeEBullets.push(eBullet);
 };
 
+var createPowerUp = function() {
+	var powerDiv = $('<div>');
+	powerDiv.attr("class", "powerUp");
+	powerUp = new GameObject(getRandomNumber(80, gameWidth - 160), 0, 50, 50, "transparent", 0.5, 5000, powerDiv);
+	$("#gameScreen").append(powerUp.element);
+	$(powerUp.element).css({"position": "absolute", "left": powerUp.x,
+	 "top": powerUp.y, "width":powerUp.width, "height": powerUp.height});
+	activePowerUps.push(powerUp);
+};
+
+var deactivatePowerUp = function() {
+	setTimeout(function() {
+		boost = false;
+	}, 10000)
+}
+
 // Checks for collision between the Player's bullets and the enemy positions
 var checkGoodCollision = function() {
 	if (activeBullets.length > 0 && activeEnemies.length > 0) {
-		activeBullets.forEach(function(bulletItem, i) {
+		activeBullets.forEach(function(bulletItem, i) { 
 			activeEnemies.forEach(function(enemyItem, o) {
 				if (bulletItem.x + bulletItem.width < enemyItem.x ||
 					bulletItem.x > enemyItem.x + enemyItem.width ||
 					bulletItem.y + bulletItem.height < enemyItem.y ||
 					bulletItem.y > enemyItem.y + enemyItem.height) {
-					// do nothing
+						return false;
 				} else {
 					bulletItem.element.remove();
 					activeBullets.splice(i, 1);
-					enemyItem.health -= 50;
+					if (boost === false) {
+						enemyItem.health -= 50;
+					} else {
+						enemyItem.health -= 80;
+					}
 					if (enemyItem.health <= 0) {
 						enemyItem.element.remove();
 						activeEnemies.splice(o, 1);
@@ -297,6 +343,43 @@ var checkBadCollision2 = function() {
 	}
 };
 
+var checkPowerCollision = function() {
+	if (activePowerUps.length > 0) {
+		for (var i=0; i < activePowerUps.length; i++) {
+			if (activePowerUps[i].x + activePowerUps[i].width < player.x ||
+				activePowerUps[i].x > player.x + player.width ||
+				activePowerUps[i].y + activePowerUps[i].height < player.y ||
+				activePowerUps[i].y > player.y + player.height) {
+					return false;
+			} else if (player.health > 0) {
+				boost = true;
+				deactivatePowerUp();
+				activePowerUps[i].element.remove();
+				activePowerUps.splice(i, 1);
+			}
+		}
+	};	
+};
+
+var checkPowerCollision2 = function () {
+	if (activePowerUps.length > 0 && secondPlayer === true) {
+		console.log("working");
+		for (var i=0; i < activePowerUps.length; i++) {
+			if (activePowerUps[i].x + activePowerUps[i].width < player2.x ||
+				activePowerUps[i].x > player2.x + player2.width ||
+				activePowerUps[i].y + activePowerUps[i].height < player2.y ||
+				activePowerUps[i].y > player2.y + player2.height) {
+					return false;
+			} else if (player2.health > 0) {
+				boost = true;
+				deactivatePowerUp();
+				activePowerUps[i].element.remove();
+				activePowerUps.splice(i, 1);
+			}
+		}
+	}
+};
+
 var scrollBackground = function() {
 
 };
@@ -315,6 +398,7 @@ var endGame = function() {
 	$("#endshot").removeClass("removeDisplay").text("Bullets Shot: " + numberOfBullets);
 	$("#replayButton").removeClass("removeDisplay");
 	$("#gameScreen").append("")
+	boost = false;
 	gamePlayed = true;
 };
 
@@ -328,6 +412,7 @@ var resetGame = function() {
 	score = 0;
 	spawnTimer = 3000;
 	player.health = 500;
+	boost = false;
 	$("#playerhealth").text(player.health);
 	$("#healthbar").css("width", healthBar * (player.health / 500));
 	$("#player2health").text(player.health);
@@ -498,8 +583,7 @@ var loopGame = function() {
 	// Update Enemy Bullets
 	if (activeEBullets.length > 0) {
 		for (let i=0; i < activeEBullets.length; i++) {
-			console.log(activeEBullets[i].trajectory);
-			if (activeEBullets[i].y > gameHeight - 20) {
+			if (activeEBullets[i].y > gameHeight - 20 || activeEBullets[i].x < 0 || activeEBullets[i].x > gameWidth) {
 				activeEBullets[i].element.remove();
 				activeEBullets.splice(i, 1);
 			} else if (activeEBullets[i].y < gameHeight) {
@@ -516,10 +600,25 @@ var loopGame = function() {
 			}
 		}
 	};
+	// Update Power-Ups
+	if (activePowerUps.length > 0) {
+		for (let i=0; i < activePowerUps.length; i++) {
+			if (activePowerUps[i].y > gameHeight - 50) {
+				activePowerUps[i].element.remove();
+				activePowerUps.splice(i, 1);
+			} else if (activePowerUps[i].y < gameHeight) {
+				activePowerUps[i].y += activePowerUps[i].speed;
+				activePowerUps[i].element.css({"top": activePowerUps[i].y})
+			}
+		}
+	};
+
 	//Check for collisions
 	checkGoodCollision();
 	checkBadCollision();
 	checkBadCollision2();
+	checkPowerCollision();
+	checkPowerCollision2();
 	//Update Game State
 	updateTime();
 	if (move.firing) {
@@ -536,6 +635,15 @@ var loopGame = function() {
 		if (player.health < 500) {
 			updateHealth();
 		}
+	};
+	if (gameTime === 2000) {
+		createPowerUp();
+	} else if (gameTime === 4000) {
+		createPowerUp();
+	} else if (gameTime === 6000) {
+		createPowerUp();
+	} else if (gameTime === 8000) {
+		createPowerUp();
 	};
 	if (score > 0) {
 		updateScore();
@@ -567,7 +675,7 @@ $(document).ready(function(){
 			startGame();
 		} else if (e.key === "Enter" && gamePlayed === true) {
 			resetGame();
-		} else if (e.key.toLowerCase() === "p") {
+		} else if (e.key.toLowerCase() === "p" && gameOn === false) {
 			secondPlayer = true;
 			$("#p2healthbar").removeClass("removeDisplay");
 			$("#player2health").removeClass("removeDisplay");
