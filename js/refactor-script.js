@@ -1,26 +1,33 @@
+// Object References
 var player;
 var enemy;
-var numberOfBullets = 0;
-var enemiesDefeated = 0;
+// Arrays of active Game Objects
 var activeBullets = [];
 var activeEnemies = [];
 var activeEBullets = [];
-var gameHeight = $("#gameScreen").innerHeight();
-var gameWidth = $("#gameScreen").innerWidth();
-var healthBar = $("#healthbar").width();
+var activePowerUps = [];
+// Stat-tracking Variables
 var score = 0;
 var highScore = localStorage.getItem("highScore");
+var numberOfBullets = 0;
+var enemiesDefeated = 0;
+var gameTime = 0;
+//Interval Handles and variables
 var loopHandle;
 var shootHandle;
 var spawnHandle;
-var gameTime = 0;
 var spawnTimer = 3000;
+// DOM References
+var gameHeight = $("#gameScreen").innerHeight();
+var gameWidth = $("#gameScreen").innerWidth();
+var healthBar = $("#healthbar").width();
+// Game-state Booleans
 var gameOn = false;
 var gamePlayed = false;
 var secondPlayer = false;
-var activePowerUps = [];
 var boost = false;
 
+// Game Object used for Ships, Bullets, and Power-Ups
 var GameObject = function(x, y, height, width, color, speed, health, element, trajectory) {
 	this.x = x;
 	this.y = y;
@@ -36,7 +43,8 @@ var GameObject = function(x, y, height, width, color, speed, health, element, tr
 	this.trajectory = trajectory;
 };
 
-// Boolean array of pressed or not-pressed key states. When true, a movement command is issued.
+// Boolean arrays of pressed or not-pressed key states. When true, a movement command is issued.
+//Player 1 Inputs
 var move = {
 	up: false,
 	down: false,
@@ -44,7 +52,7 @@ var move = {
 	right: false,
 	firing: false
 };
-
+//Player 2 Inputs
 var move2 = {
 	up: false,
 	down: false,
@@ -53,103 +61,8 @@ var move2 = {
 	firing: false
 };
 
-// Activates Relevant Keys When Pressed
-$(document).keydown(function(e) {
-	switch(true) {
-		// Player 1 Movement
-		case(e.key.toLowerCase() === "w"):
-		move.up = true;
-			break;
-		case(e.key.toLowerCase() === "s"):
-		move.down = true;
-			break;
-		case(e.key.toLowerCase() === "a"):
-		move.left = true;
-			break;
-		case(e.key.toLowerCase() === "d"):
-		move.right = true;
-			break;
-		case(e.key.toLowerCase() === "j"):
-		move.firing = true;
-			break;
-		default:
-		// console.log("Incorrect Key")
-			break;
-	}
-	switch(true) {
-		// Player 2 Movement
-		case(e.key.toLowerCase() === "arrowup"):
-		e.preventDefault();
-		move2.up = true;
-			break;
-		case(e.key.toLowerCase() === "arrowdown"):
-		e.preventDefault();
-		move2.down = true;
-			break;
-		case(e.key.toLowerCase() === "arrowleft"):
-		e.preventDefault();
-		move2.left = true;
-			break;
-		case(e.key.toLowerCase() === "arrowright"):
-		e.preventDefault();
-		move2.right = true;
-			break;
-		case(e.key.toLowerCase() === "l"):
-		// e.preventDefault();
-		move2.firing = true;
-			break;
-		default:
-		// console.log("Incorrect Key")
-			break;
-	}
-});
-
-// Deactivates Activated Keys When Released
-$(document).keyup(function(e) {
-	switch(true) {
-		// Player 1 Movement
-		case(e.key.toLowerCase() === "w"):
-		move.up = false;
-			break;
-		case(e.key.toLowerCase() === "s"):
-		move.down = false;
-			break;
-		case(e.key.toLowerCase() === "a"):
-		move.left = false;
-			break;
-		case(e.key.toLowerCase() === "d"):
-		move.right = false;
-			break;
-		case(e.key.toLowerCase() === "j"): 
-		move.firing = false;
-			break;
-		default:
-		// console.log("Incorrect Key")
-			break;
-	}
-	switch(true) {
-		// Player 2 Movement
-		case(e.key.toLowerCase() === "arrowup"):
-		move2.up = false;
-			break;
-		case(e.key.toLowerCase() === "arrowdown"):
-		move2.down = false;
-			break;
-		case(e.key.toLowerCase() === "arrowleft"):
-		move2.left = false;
-			break;
-		case(e.key.toLowerCase() === "arrowright"):
-		move2.right = false;
-			break;
-		case(e.key.toLowerCase() === "l"): 
-		move2.firing = false;
-			break;
-		default:
-		// console.log("Incorrect Key")
-			break;
-	}
-});
-
+// Game Objects
+// Player 1
 var createPlayer = function() {
 	// Creates a new div
 	var playerDiv = $('<div>');
@@ -164,6 +77,7 @@ var createPlayer = function() {
 	 "top": player.y, "width": player.width, "height": player.height});
 };
 
+// Player 2
 var createPlayer2 = function () {
 	var playerDiv = $('<div>');
 	playerDiv.attr("id", "player2Ship");
@@ -172,7 +86,7 @@ var createPlayer2 = function () {
 	$(player2.element).css({"position": "absolute", "left": player2.x,
 	 "top": player2.y, "width": player2.width, "height": player2.height});
 };
-
+// Player 1 Shooting Function
 var fireBullet = function() {
 	if (boost === false) {
 		var bulletColor = "#FF0000";
@@ -195,6 +109,7 @@ var fireBullet = function() {
 	}
 };
 
+// Player 2 Shooting Function
 var fireBullet2 = function() {
 	if (boost === false) {
 		var bulletColor = "#0059FF";
@@ -216,24 +131,7 @@ var fireBullet2 = function() {
 		activeBullets.push(bullet);
 	}
 };
-
-var getRandomNumber = function(min, max) {
-	return Math.floor(Math.random() * max) + min;
-};
-
-var getRandomColor = function() {
-	var rainbow = ["#ADD5F7", "#FFFFFF"]
-	let randomColor = Math.floor(Math.random() * rainbow.length);
-	return rainbow[randomColor];
-};
-
-var addFireRate = function () {
-	var index = activeEnemies.length -1;
-	shootHandle = setInterval(function() {
-		activeEnemies[index].fire();
-	}, getRandomNumber(1000, 3000));
-};
-
+// Enemy 
 var createEnemy = function() {
 	var enemyDiv = $('<div>');
 	enemyDiv.attr("class", "enemy");
@@ -246,6 +144,7 @@ var createEnemy = function() {
 	spawnHandle = setTimeout(createEnemy, spawnTimer);
 };
 
+// Enemy Shooting Function
 var enemyShoot = function(id) {
 	if (gameTime < 1500) {
 		var randomBullet = 1;
@@ -261,6 +160,7 @@ var enemyShoot = function(id) {
 	activeEBullets.push(eBullet);
 };
 
+// Power-Up Function
 var createPowerUp = function() {
 	var powerDiv = $('<div>');
 	powerDiv.attr("class", "powerUp");
@@ -271,12 +171,33 @@ var createPowerUp = function() {
 	activePowerUps.push(powerUp);
 };
 
+// Random Generators
+var getRandomNumber = function(min, max) {
+	return Math.floor(Math.random() * max) + min;
+};
+
+var getRandomColor = function() {
+	var rainbow = ["#ADD5F7", "#FFFFFF"]
+	let randomColor = Math.floor(Math.random() * rainbow.length);
+	return rainbow[randomColor];
+};
+
+// Adds an interval to each enemy object giving them varying firing patterns
+var addFireRate = function () {
+	var index = activeEnemies.length -1;
+	shootHandle = setInterval(function() {
+		activeEnemies[index].fire();
+	}, getRandomNumber(1000, 3000));
+};
+
+// Cancels the effects of a power-up after 10 seconds when called
 var deactivatePowerUp = function() {
 	setTimeout(function() {
 		boost = false;
 	}, 10000)
 }
 
+//Collision Detection Functions
 // Checks for collision between the Player's bullets and the enemy positions
 var checkGoodCollision = function() {
 	if (activeBullets.length > 0 && activeEnemies.length > 0) {
@@ -316,7 +237,7 @@ var checkBadCollision = function() {
 				activeEBullets[i].x > player.x + player.width ||
 				activeEBullets[i].y + activeEBullets[i].height < player.y ||
 				activeEBullets[i].y > player.y + player.height) {
-				// do nothing
+					return false;
 			} else if (player.health > 0) {
 				player.health -= 50;
 				activeEBullets[i].element.remove();
@@ -326,6 +247,7 @@ var checkBadCollision = function() {
 	}
 };
 
+// Checks for collisions between the enemies' bullets and the Player2's position.
 var checkBadCollision2 = function() {
 	if (activeEBullets.length > 0 && secondPlayer === true) {
 		for (var i=0; i < activeEBullets.length; i++) {
@@ -333,7 +255,7 @@ var checkBadCollision2 = function() {
 				activeEBullets[i].x > player2.x + player2.width ||
 				activeEBullets[i].y + activeEBullets[i].height < player2.y ||
 				activeEBullets[i].y > player2.y + player2.height) {
-				// do nothing
+					return false;
 			} else if (player2.health > 0) {
 				player2.health -= 50;
 				activeEBullets[i].element.remove();
@@ -343,6 +265,7 @@ var checkBadCollision2 = function() {
 	}
 };
 
+// Checks for contact between the Player and Power-Ups
 var checkPowerCollision = function() {
 	if (activePowerUps.length > 0) {
 		for (var i=0; i < activePowerUps.length; i++) {
@@ -361,9 +284,9 @@ var checkPowerCollision = function() {
 	};	
 };
 
+// Checks for contact between Player 2 and Power-Ups
 var checkPowerCollision2 = function () {
 	if (activePowerUps.length > 0 && secondPlayer === true) {
-		console.log("working");
 		for (var i=0; i < activePowerUps.length; i++) {
 			if (activePowerUps[i].x + activePowerUps[i].width < player2.x ||
 				activePowerUps[i].x > player2.x + player2.width ||
@@ -380,8 +303,25 @@ var checkPowerCollision2 = function () {
 	}
 };
 
-var scrollBackground = function() {
-
+//Game-state functions
+var startGame = function() {
+	$("#instructions").addClass("removeDisplay");
+	$("#startButton").addClass("removeDisplay");
+	$("#instructions").removeClass("gridclass");
+	$("#gameScreen").removeClass("removeDisplay");
+	$("#player2-information").addClass("removeDisplay");
+	$("#join-button").addClass("removeDisplay");
+	createPlayer();
+	if (secondPlayer === true) {
+		createPlayer2();
+	};
+	createEnemy();
+	if (highScore < 1) {
+		$("#highscore").text(0);
+	} else {
+		$("#highscore").text(highScore);
+	}
+	loopHandle = requestAnimationFrame(loopGame);
 };
 
 var endGame = function() {
@@ -398,7 +338,6 @@ var endGame = function() {
 	$("#endkill").removeClass("removeDisplay").text("Enemies Defeated: " + enemiesDefeated);
 	$("#endshot").removeClass("removeDisplay").text("Bullets Shot: " + numberOfBullets);
 	$("#replayButton").removeClass("removeDisplay");
-	$("#gameScreen").append("")
 	boost = false;
 	gamePlayed = true;
 };
@@ -429,6 +368,7 @@ var resetGame = function() {
 	startGame();
 };
 
+// Update Functions
 // update healthbar width by percentage of player.heatlh
 var updateHealth = function() {
 	$("#playerhealth").text(player.health);
@@ -438,7 +378,7 @@ var updateHealth = function() {
 		$("#p2healthbar").css("width", healthBar * (player2.health / 500));
 	};
 };
-
+// Changes score values and score displays
 var updateScore = function() {
 	$("#playerscore").text(score);
 	if (score > highScore) {
@@ -460,27 +400,7 @@ var updateTime = function() {
 	}
 };
 
-var startGame = function() {
-	$("#instructions").addClass("removeDisplay");
-	$("#startButton").addClass("removeDisplay");
-	$("#instructions").removeClass("gridclass");
-	$("#gameScreen").removeClass("removeDisplay");
-	$("#player2-information").addClass("removeDisplay");
-	$("#join-button").addClass("removeDisplay");
-
-	createPlayer();
-	if (secondPlayer === true) {
-		createPlayer2();
-	};
-	createEnemy();
-	if (highScore < 1) {
-		$("#highscore").text(0);
-	} else {
-		$("#highscore").text(highScore);
-	}
-	loopHandle = requestAnimationFrame(loopGame);
-};
-
+// Game Loop
 var loopGame = function() {
 	//Player Input
 	switch(true) {
@@ -514,7 +434,6 @@ var loopGame = function() {
 		player.x -= player.speed;
 			break;
 		default:
-		// console.log("Something is wrong");
 			break;
 	};
 	// Player 2 Movement
@@ -549,13 +468,11 @@ var loopGame = function() {
 			player2.x -= player2.speed;
 				break;
 			default:
-			// console.log("Something is wrong");
 				break;
 		};
 	}
 
-	//Update All Positions 
-
+	//Update All Positions / Animate
 	// Update Player Positions
 	$(player.element).css({"left": player.x, "top": player.y});
 	if (secondPlayer === true) {
@@ -573,7 +490,7 @@ var loopGame = function() {
 			}
 		}
 	};
-	// Update Positions
+	// Update Enemy Positions
 	if (activeEnemies.length > 0) {
 		for (let i=0; i < activeEnemies.length; i++) {
 			if (activeEnemies[i].y > gameHeight - 50) {
@@ -605,7 +522,7 @@ var loopGame = function() {
 			}
 		}
 	};
-	// Update Power-Ups
+	// Update Power-Up Positions
 	if (activePowerUps.length > 0) {
 		for (let i=0; i < activePowerUps.length; i++) {
 			if (activePowerUps[i].y > gameHeight - 50) {
@@ -617,7 +534,6 @@ var loopGame = function() {
 			}
 		}
 	};
-
 	//Check for collisions
 	checkGoodCollision();
 	checkBadCollision();
@@ -673,12 +589,107 @@ var loopGame = function() {
 	};
 };
 
+// Add Event Listeners
 $(document).ready(function(){
+// Activates Relevant Keys in Respective Move Array When Pressed
+	$(document).keydown(function(e) {
+		switch(true) {
+			// Player 1 Movement
+			case(e.key.toLowerCase() === "w"):
+			move.up = true;
+				break;
+			case(e.key.toLowerCase() === "s"):
+			move.down = true;
+				break;
+			case(e.key.toLowerCase() === "a"):
+			move.left = true;
+				break;
+			case(e.key.toLowerCase() === "d"):
+			move.right = true;
+				break;
+			case(e.key.toLowerCase() === "j"):
+			move.firing = true;
+				break;
+			default:
+				break;
+		}
+		switch(true) {
+			// Player 2 Movement
+			case(e.key.toLowerCase() === "arrowup"):
+			e.preventDefault();
+			move2.up = true;
+				break;
+			case(e.key.toLowerCase() === "arrowdown"):
+			e.preventDefault();
+			move2.down = true;
+				break;
+			case(e.key.toLowerCase() === "arrowleft"):
+			e.preventDefault();
+			move2.left = true;
+				break;
+			case(e.key.toLowerCase() === "arrowright"):
+			e.preventDefault();
+			move2.right = true;
+				break;
+			case(e.key.toLowerCase() === "l"):
+			e.preventDefault();
+			move2.firing = true;
+				break;
+			default:
+				break;
+		}
+	});
+
+	// Deactivates Activated Keys When Released
+	$(document).keyup(function(e) {
+		switch(true) {
+			// Player 1 Movement
+			case(e.key.toLowerCase() === "w"):
+			move.up = false;
+				break;
+			case(e.key.toLowerCase() === "s"):
+			move.down = false;
+				break;
+			case(e.key.toLowerCase() === "a"):
+			move.left = false;
+				break;
+			case(e.key.toLowerCase() === "d"):
+			move.right = false;
+				break;
+			case(e.key.toLowerCase() === "j"): 
+			move.firing = false;
+				break;
+			default:
+				break;
+		}
+		switch(true) {
+			// Player 2 Movement
+			case(e.key.toLowerCase() === "arrowup"):
+			move2.up = false;
+				break;
+			case(e.key.toLowerCase() === "arrowdown"):
+			move2.down = false;
+				break;
+			case(e.key.toLowerCase() === "arrowleft"):
+			move2.left = false;
+				break;
+			case(e.key.toLowerCase() === "arrowright"):
+			move2.right = false;
+				break;
+			case(e.key.toLowerCase() === "l"): 
+			move2.firing = false;
+				break;
+			default:
+				break;
+		}
+	});
+	// Sets HighScore Display on landing
 	if (highScore < 1) {
 		$("#highscore").text(0);
 	} else {
 		$("#highscore").text(highScore);
 	}
+	// Controls Start Game Function and Player 2 Opt-In Functionality
 	$(document).on("keypress", function(e) {
 		if (e.key === "Enter" && gameOn === false) {
 			gameOn = true;
@@ -694,5 +705,4 @@ $(document).ready(function(){
 			$("#join-button").css({"padding-top": "18%"});
 		}
 	});
-	console.log("ready");
 });
