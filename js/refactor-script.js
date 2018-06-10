@@ -9,7 +9,7 @@ var gameHeight = $("#gameScreen").innerHeight();
 var gameWidth = $("#gameScreen").innerWidth();
 var healthBar = $("#healthbar").width();
 var score = 0;
-var highScore = 0;
+var highScore = localStorage.getItem("highScore");
 var loopHandle;
 var shootHandle;
 var spawnHandle;
@@ -390,6 +390,7 @@ var endGame = function() {
 	clearTimeout(spawnHandle);
 	if (score >= highScore) {
 		$("#newScore").removeClass("removeDisplay");
+		localStorage.setItem("highScore", score);
 	}
 	$("#gameOver").removeClass("removeDisplay");
 	$("#endstats").removeClass("removeDisplay");
@@ -472,8 +473,12 @@ var startGame = function() {
 		createPlayer2();
 	};
 	createEnemy();
+	if (highScore < 1) {
+		$("#highscore").text(0);
+	} else {
+		$("#highscore").text(highScore);
+	}
 	loopHandle = requestAnimationFrame(loopGame);
-	$("#highscore").text(highScore);
 };
 
 var loopGame = function() {
@@ -669,6 +674,11 @@ var loopGame = function() {
 };
 
 $(document).ready(function(){
+	if (highScore < 1) {
+		$("#highscore").text(0);
+	} else {
+		$("#highscore").text(highScore);
+	}
 	$(document).on("keypress", function(e) {
 		if (e.key === "Enter" && gameOn === false) {
 			gameOn = true;
