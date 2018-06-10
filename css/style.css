@@ -171,6 +171,24 @@ header {
   100% { background-color: #B20000; box-shadow: 0 0 3px #B20000; }
 }
 
+#join-button {
+	text-align: center;
+	width: 80%;
+	border-radius: 10px;
+	margin-left: 10%;
+	background-color: gray;
+	height: 4em;
+	margin-top: 75%;
+}
+
+#join-button p {
+	padding-top: 2%;
+}
+
+#player2-information {
+	margin-top : 10em;
+}
+
 .scorehud {
 	grid-area: "scorehud";
 	margin-left: 13.5%;

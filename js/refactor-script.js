@@ -33,7 +33,7 @@ var GameObject = function(x, y, height, width, color, speed, health, element) {
 	}
 };
 
-// Array of pressed or not-pressed key states
+// Boolean array of pressed or not-pressed key states. When true, a movement command is issued.
 var move = {
 	up: false,
 	down: false,
@@ -48,7 +48,7 @@ var move2 = {
 	left: false,
 	right: false,
 	firing: false
-}
+};
 
 // Activates Relevant Keys When Pressed
 $(document).keydown(function(e) {
@@ -173,25 +173,27 @@ var createPlayer2 = function () {
 var fireBullet = function() {
 	if (player.health > 0) {
 		numberOfBullets += 1;
-	var bulletDiv = $('<div>');
-	bulletDiv.attr("class", "playerBullet");
-	var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "#FF0000", 10, 0, bulletDiv);
-	$("#gameScreen").append(bullet.element);
-	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
-	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
-	activeBullets.push(bullet);
+		var bulletDiv = $('<div>');
+		bulletDiv.attr("class", "playerBullet");
+		var bullet = new GameObject(player.x + 23, player.y - 16, 5, 5, "#FF0000", 10, 0, bulletDiv);
+		$("#gameScreen").append(bullet.element);
+		$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
+		 "top": bullet.y, "width": bullet.width, "height": bullet.height});
+		activeBullets.push(bullet);
 	}
 };
 
 var fireBullet2 = function() {
-	numberOfBullets += 1;
-	var bulletDiv = $('<div>');
-	bulletDiv.attr("class", "player2Bullet");
-	var bullet = new GameObject(player2.x + 23, player2.y - 16, 5, 5, "#0059FF", 10, 0, bulletDiv);
-	$("#gameScreen").append(bullet.element);
-	$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
-	 "top": bullet.y, "width": bullet.width, "height": bullet.height});
-	activeBullets.push(bullet);
+	if (player2.health > 0) {
+		numberOfBullets += 1;
+		var bulletDiv = $('<div>');
+		bulletDiv.attr("class", "player2Bullet");
+		var bullet = new GameObject(player2.x + 23, player2.y - 16, 5, 5, "#0059FF", 10, 0, bulletDiv);
+		$("#gameScreen").append(bullet.element);
+		$(bullet.element).css({"background-color": bullet.color, "position": "absolute", "left": bullet.x,
+		 "top": bullet.y, "width": bullet.width, "height": bullet.height});
+		activeBullets.push(bullet);
+	}
 };
 
 var getRandomNumber = function(min, max) {
@@ -264,7 +266,7 @@ var checkBadCollision = function() {
 				activeEBullets[i].y + activeEBullets[i].height < player.y ||
 				activeEBullets[i].y > player.y + player.height) {
 				// do nothing
-			} else {
+			} else if (player.health > 0) {
 				player.health -= 50;
 				activeEBullets[i].element.remove();
 				activeEBullets.splice(i, 1);
@@ -274,14 +276,14 @@ var checkBadCollision = function() {
 };
 
 var checkBadCollision2 = function() {
-	if (activeEBullets.length > 0) {
+	if (activeEBullets.length > 0 && secondPlayer === true) {
 		for (var i=0; i < activeEBullets.length; i++) {
 			if (activeEBullets[i].x + activeEBullets[i].width < player2.x ||
 				activeEBullets[i].x > player2.x + player2.width ||
 				activeEBullets[i].y + activeEBullets[i].height < player2.y ||
 				activeEBullets[i].y > player2.y + player2.height) {
 				// do nothing
-			} else {
+			} else if (player2.health > 0) {
 				player2.health -= 50;
 				activeEBullets[i].element.remove();
 				activeEBullets.splice(i, 1);
@@ -338,8 +340,10 @@ var resetGame = function() {
 var updateHealth = function() {
 	$("#playerhealth").text(player.health);
 	$("#healthbar").css("width", healthBar * (player.health / 500));
-	$("#player2health").text(player2.health);
-	$("#p2healthbar").css("width", healthBar * (player2.health / 500));
+	if (secondPlayer === true) {
+		$("#player2health").text(player2.health);
+		$("#p2healthbar").css("width", healthBar * (player2.health / 500));
+	};
 };
 
 var updateScore = function() {
@@ -365,9 +369,13 @@ var startGame = function() {
 	$("#startButton").addClass("removeDisplay");
 	$("#instructions").removeClass("gridclass");
 	$("#gameScreen").removeClass("removeDisplay");
+	$("#player2-information").addClass("removeDisplay");
+	$("#join-button").addClass("removeDisplay");
+
 	createPlayer();
-	createPlayer2();
-	secondPlayer = true;
+	if (secondPlayer === true) {
+		createPlayer2();
+	};
 	createEnemy();
 	loopHandle = requestAnimationFrame(loopGame);
 	$("#highscore").text(highScore);
@@ -501,8 +509,14 @@ var loopGame = function() {
 	if (move2.firing) {
 		fireBullet2();
 	}
-	if (player.health < 500 || player2.health < 500) {
-		updateHealth();
+	if (secondPlayer === true) {
+		if (player.health < 500 || player2.health < 500) {
+			updateHealth();
+		}
+	} else {
+		if (player.health < 500) {
+			updateHealth();
+		}
 	};
 	if (score > 0) {
 		updateScore();
@@ -534,6 +548,13 @@ $(document).ready(function(){
 			startGame();
 		} else if (e.key === "Enter" && gamePlayed === true) {
 			resetGame();
+		} else if (e.key.toLowerCase() === "p") {
+			secondPlayer = true;
+			$("#p2healthbar").removeClass("removeDisplay");
+			$("#player2health").removeClass("removeDisplay");
+			$("#player2-information").removeClass("removeDisplay");
+			$("#join-button").css("animation", "glow 2000ms infinite").text("Player 2 Ready!");
+			$("#join-button").css({"padding-top": "18%"});
 		}
 	});
 	console.log("ready");
