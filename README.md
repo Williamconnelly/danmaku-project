@@ -30,7 +30,7 @@ Severe performance degradation. With each animation loop, processing 60 times a 
 
 ## Design Stage
 
-With my game now refactored, everything was much more tightly written and far more accepting of new features. I had a player div the user could control, randomly spawning enemies, and accurate bullet logic for both of them. With no performance degradation in sight and the core functionality of my game complete, it was at last time to move on from my unstyled, box aesthetic. As classic arcade shooters were at the root of my inspiration, I opted to make a HUD-like display on either side of my gamescreen. The left would display vital player information such as health and score while my right-hand screen could manage stats and other more flexible information. I found open-source sprites I could use for my div backgrounds and suddenly, my game transformed completely. I then created a landing page in the form of a detailed instructions menu and restructured many of my functions to work in
+With my game now refactored, everything was much more tightly written and far more accepting of new features. I had a player div the user could control, randomly spawning enemies, and accurate bullet logic for both of them. With no performance degradation in sight and the core functionality of my game complete, it was at last time to move on from my unstyled, box aesthetic. As classic arcade shooters were at the root of my inspiration, I opted to make a HUD-like display on either side of my gamescreen. The left would display vital player information such as health and score while my right-hand screen could manage stats and other more flexible information. I found open-source sprites I could use for my div backgrounds and suddenly, my game transformed completely. I then created a landing page in the form of a detailed instructions menu and restructured many of my functions to work in a different gamestate than the one the player first lands in.
 
 ![image1](https://github.com/Williamconnelly/danmaku-project/blob/master/img/screenshot-5.png)
 
@@ -56,5 +56,6 @@ My co-op feature, while functional, definitely comes off as a second-thought, es
 
 * HTML
 * CSS
+* CSS Grid
 * JQuery
 * JavaScript
